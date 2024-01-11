@@ -27,9 +27,11 @@ UNDO_BUTTON_TEXT_COLOR = (255, 255, 255)
 REDO_BUTTON_POS = (150, SCREEN_HEIGHT - 50)
 REDO_BUTTON_COLOR = (200, 0, 0)
 
-# Setup the screen
+# Set up the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Wheel Graph Dots and Boxes')
+pygame_icon = pygame.image.load('icon.png')
+pygame.display.set_icon(pygame_icon)
 
 
 def prompt_for_spokes():
@@ -142,6 +144,7 @@ def get_clicked_edge(edges, mouse_pos):
     return None
 
 
+# Don't worry; ChatGPT helped me with this part...
 def get_nearest_point_on_line(a, b, p):
     ap = (p[0] - a[0], p[1] - a[1])
     ab = (b[0] - a[0], b[1] - a[1])

@@ -253,21 +253,19 @@ def game_over(player_scores):
     overlay.fill((0, 0, 0, 128))  # Semi-transparent black
     screen.blit(overlay, (0, 0))
 
-    # Decide the game over text
-    winner_text = "Game Over - "
+    # Decide the game over text and color (red in this case)
     if player_scores[0] > player_scores[1]:
-        winner_text += "Player 1 wins!"
+        winner_text = "Player 1 wins!"
     elif player_scores[1] > player_scores[0]:
-        winner_text += "Player 2 wins!"
+        winner_text = "Player 2 wins!"
     else:
-        winner_text += "It's a tie!"
+        winner_text = "It's a tie!"
     
-    # Set the color to neon green for high contrast
-    text_color = (57, 255, 20)
+    # Set the color to red
+    text_color = (255, 0, 0)
 
     # Create a text surface with the winner message
     text_surface = PLAYER_FONT.render(winner_text, True, text_color)
-    
     # Position the text in the center of the screen
     text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 

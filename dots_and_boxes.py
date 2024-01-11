@@ -29,7 +29,7 @@ REDO_BUTTON_COLOR = (200, 0, 0)
 
 # Set up the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption('Wheel Graph Dots and Boxes')
+pygame.display.set_caption('Dots and Boxes')
 pygame_icon = pygame.image.load('icon.png')
 pygame.display.set_icon(pygame_icon)
 

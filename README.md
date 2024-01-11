@@ -51,4 +51,4 @@ https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/88254238-7efe-
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/0xCUB3/Modified-Dots-and-Boxes?tab=MIT-1-ov-file#) for more information.

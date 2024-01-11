@@ -248,20 +248,34 @@ def game_loop(n_spokes):
     game_over(player_scores)
 
 def game_over(player_scores):
-    screen.fill((0, 0, 0))
-    if player_scores[0] > player_scores[1]:
-        winner_text = "Player 1 wins!"
-    elif player_scores[1] > player_scores[0]:
-        winner_text = "Player 2 wins!"
-    else:
-        winner_text = "It's a tie!"
+    # Use a semi-transparent surface to darken the screen slightly
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 128))  # Semi-transparent black
+    screen.blit(overlay, (0, 0))
 
-    text_surface = PLAYER_FONT.render(winner_text, True, TEXT_COLOR)
-    screen.blit(text_surface, (SCREEN_WIDTH // 2 - text_surface.get_width() // 2,
-                               SCREEN_HEIGHT // 2 - text_surface.get_height() // 2))
-    pygame.display.flip()
-    pygame.time.wait(GAME_OVER_DELAY)
-    # Do not quit the game and exit the system; let it return to the main loop.
+    # Decide the game over text
+    winner_text = "Game Over - "
+    if player_scores[0] > player_scores[1]:
+        winner_text += "Player 1 wins!"
+    elif player_scores[1] > player_scores[0]:
+        winner_text += "Player 2 wins!"
+    else:
+        winner_text += "It's a tie!"
+    
+    # Set the color to neon green for high contrast
+    text_color = (57, 255, 20)
+
+    # Create a text surface with the winner message
+    text_surface = PLAYER_FONT.render(winner_text, True, text_color)
+    
+    # Position the text in the center of the screen
+    text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+
+    # Blit the text surface onto the screen
+    screen.blit(text_surface, text_rect)
+    pygame.display.flip()  # Update the display with the new overlay
+
+    pygame.time.wait(GAME_OVER_DELAY)  # Wait for a few seconds before continuing
 
 
 def main():

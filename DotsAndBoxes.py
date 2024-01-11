@@ -155,14 +155,15 @@ def get_nearest_point_on_line(a, b, p):
 
 def check_for_isolated_vertices(vertices, edges, current_player):
     player_tag = 'player 1' if current_player == 0 else 'player 2'
+    isolated_vertex_count = 0
     for vertex in vertices:
         if vertices[vertex] is False:  # Vertex is not owned yet
             # Check if all edges connected to this vertex are inactive
             connected_edges = [edge for edge in edges if vertex in edge]
             if all(not edges[edge] for edge in connected_edges):
                 vertices[vertex] = player_tag  # Assign vertex to player
-                return True  # Isolated vertex found
-    return False  # No isolated vertices found
+                isolated_vertex_count += 1  # Increment the isolated vertex count
+    return isolated_vertex_count
 
 
 def draw_buttons(current_player):
@@ -210,11 +211,6 @@ def game_loop(n_spokes):
     redo_stack = []  # Store the state after each undo
 
     while running:
-        screen.fill((0, 0, 0))
-        draw_wheel_graph(edges, vertices, n_spokes, current_player)
-        draw_buttons(current_player)
-        pygame.display.flip()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -228,23 +224,30 @@ def game_loop(n_spokes):
                 elif clicked_button == 'redo':
                     edges, vertices, current_player = redo_move(redo_stack, move_history, (edges, vertices, current_player))
                 else:
-                    redo_stack = []  # Clear the redo stack if a new move is made
+                    redo_stack.clear()  # Clear the redo stack if a new move is made
                     clicked_edge = get_clicked_edge(edges, mouse_pos)
                     if clicked_edge and edges[clicked_edge]:
                         move_history.append((edges.copy(), vertices.copy(), current_player))
                         edges[clicked_edge] = False
-                        isolated = check_for_isolated_vertices(vertices, edges, current_player)
-                        if isolated:
-                            player_scores[current_player] += 1  # Increment player's score
-                        else:
+                        isolated_vertices_changed = check_for_isolated_vertices(vertices, edges, current_player)
+                        if not isolated_vertices_changed:
                             current_player = 1 - current_player  # Change turn if no vertex isolated
+                        else:
+                            player_scores[current_player] += isolated_vertices_changed  # Increment player's score by number of isolated vertices
 
-        # Check for game over condition
+        # Redraw game state before checking for game over
+        screen.fill((0, 0, 0))
+        draw_wheel_graph(edges, vertices, n_spokes, current_player)
+        draw_buttons(current_player)
+        pygame.display.flip()
+        
+        # Check for game over condition after updating display
         if not any(edges.values()):  # No active edges left
-            running = False
+            running = False  # End the game after the last move is rendered
 
         clock.tick(60)
-    
+
+    # Display the game over state after exiting main loop
     game_over(player_scores)
 
 def game_over(player_scores):

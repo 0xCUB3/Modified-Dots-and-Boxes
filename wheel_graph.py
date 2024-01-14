@@ -116,7 +116,7 @@ def main():
             initial_player_scores = [0, 0]
 
             winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
-            print(f"For {n_spokes} spokes: Player {winner + 1} wins with perfect play.")
+            print(f"{n_spokes} spokes - Player {winner + 1} wins with perfect play.")
     else:
         print("Invalid mode selected. Please enter 'specific' or 'range'.")
 

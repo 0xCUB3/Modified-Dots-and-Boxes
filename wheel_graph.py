@@ -1,4 +1,5 @@
 import math
+import time
 
 # Constants
 PLAYER_COUNT = 2
@@ -86,39 +87,37 @@ def simulate_game(edges, vertices, player_scores, current_player, memo):
     memo[game_state_key] = winner
     return winner
 
-# Main function
 def main():
-    # Determine if the user wants a specific value or a range
     mode = input("Enter 'specific' for a specific number of spokes or 'range' for a range of spokes: ").lower()
     if mode == 'specific':
-        # Ask for a specific number of spokes
-        while True:
-            n_spokes = int(input("Enter the number of spokes (3 or more): "))
-            if n_spokes >= 3:
-                break
+        n_spokes = int(input("Enter the number of spokes (3 or more): "))
+        while n_spokes < 3:
+            n_spokes = int(input("Please enter a valid number of spokes (3 or more): "))
         edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
         initial_player_scores = [0, 0]
         memo = {}
 
+        start_time = time.time()
         winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
-        print(f"For {n_spokes} spokes: Player {winner + 1} wins with perfect play.")
+        elapsed_time = time.time() - start_time
+
+        print(f"For {n_spokes} spokes: Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
     elif mode == 'range':
-        # Ask for a range of spokes
-        while True:
-            x_value = int(input("Enter the maximum number of spokes (X) for range (3 to X): "))
-            if x_value >= 3:
-                break
-        # Initialize memoization dictionary outside the loop to reuse results
+        x_value = int(input("Enter the maximum number of spokes (X) for range (3 to X): "))
+        while x_value < 3:
+            x_value = int(input("Please enter a valid maximum number of spokes (3 or more): "))
         memo = {}
         
         for n_spokes in range(3, x_value + 1):
             edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
             initial_player_scores = [0, 0]
 
+            start_time = time.time()
             winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
-            print(f"{n_spokes} spokes - Player {winner + 1} wins with perfect play.")
+            elapsed_time = time.time() - start_time
+
+            print(f"{n_spokes} spokes - Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
     else:
         print("Invalid mode selected. Please enter 'specific' or 'range'.")
-
 if __name__ == "__main__":
     main()

@@ -20,11 +20,20 @@ def create_wheel_graph_edges_and_vertices(n_spokes):
 
     return edges, vertices
 
-# Function to simulate the game recursively
-def simulate_game(edges, vertices, player_scores, current_player):
+# Function to simulate the game recursively with memoization
+def simulate_game(edges, vertices, player_scores, current_player, memo):
+    # Convert game state to a hashable key for memoization
+    game_state_key = (tuple(sorted(edges.items())), tuple(sorted(vertices.items())), tuple(player_scores), current_player)
+    
+    if game_state_key in memo:
+        # Return the cached result
+        return memo[game_state_key]
+
     if not any(edges.values()):
         # No moves left, game over
-        return current_player if player_scores[current_player] > player_scores[1 - current_player] else 1 - current_player
+        winner = current_player if player_scores[current_player] > player_scores[1 - current_player] else 1 - current_player
+        memo[game_state_key] = winner
+        return winner
 
     best_score = float('-inf') if current_player == 0 else float('inf')
     best_move = None
@@ -50,10 +59,10 @@ def simulate_game(edges, vertices, player_scores, current_player):
 
             # If no isolated vertex is created, it's the other player's turn
             if not isolated:
-                winner = simulate_game(new_edges, new_vertices, new_player_scores, next_player)
+                winner = simulate_game(new_edges, new_vertices, new_player_scores, next_player, memo)
             else:
                 # The current player made a move that created an isolated vertex, hence they play again
-                winner = simulate_game(new_edges, new_vertices, new_player_scores, current_player)
+                winner = simulate_game(new_edges, new_vertices, new_player_scores, current_player, memo)
 
             current_score_diff = new_player_scores[current_player] - new_player_scores[next_player]
             
@@ -69,23 +78,47 @@ def simulate_game(edges, vertices, player_scores, current_player):
 
     if best_move is None:
         # No moves improved the situation, so return the winner based on the current score
-        return current_player if player_scores[current_player] > player_scores[1 - current_player] else 1 - current_player
+        winner = current_player if player_scores[current_player] > player_scores[1 - current_player] else 1 - current_player
+    else:
+        winner = winner
 
+    # Cache the result before returning it
+    memo[game_state_key] = winner
     return winner
 
 # Main function
 def main():
-    # Ask for the number of spokes (must be greater than 2)
-    while True:
-        n_spokes = int(input("Enter the number of spokes (3 or more): "))
-        if n_spokes >= 3:
-            break
-    
-    edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
-    initial_player_scores = [0, 0]
+    # Determine if the user wants a specific value or a range
+    mode = input("Enter 'specific' for a specific number of spokes or 'range' for a range of spokes: ").lower()
+    if mode == 'specific':
+        # Ask for a specific number of spokes
+        while True:
+            n_spokes = int(input("Enter the number of spokes (3 or more): "))
+            if n_spokes >= 3:
+                break
+        edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
+        initial_player_scores = [0, 0]
+        memo = {}
 
-    winner = simulate_game(edges, vertices, initial_player_scores, 0)
-    print(f"Player {winner + 1} wins with perfect play.")
+        winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
+        print(f"For {n_spokes} spokes: Player {winner + 1} wins with perfect play.")
+    elif mode == 'range':
+        # Ask for a range of spokes
+        while True:
+            x_value = int(input("Enter the maximum number of spokes (X) for range (3 to X): "))
+            if x_value >= 3:
+                break
+        # Initialize memoization dictionary outside the loop to reuse results
+        memo = {}
+        
+        for n_spokes in range(3, x_value + 1):
+            edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
+            initial_player_scores = [0, 0]
+
+            winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
+            print(f"For {n_spokes} spokes: Player {winner + 1} wins with perfect play.")
+    else:
+        print("Invalid mode selected. Please enter 'specific' or 'range'.")
 
 if __name__ == "__main__":
     main()

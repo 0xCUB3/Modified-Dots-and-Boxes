@@ -1,5 +1,13 @@
 import time
 
+# Create a Hanging Tree Graph
+def create_hanging_tree_edges_and_vertices(n_leaves):
+    edges = {(0, vertex): True for vertex in range(1, n_leaves + 1)}
+    edges.update({(vertex, vertex): True for vertex in range(1, n_leaves + 1)})  # Adding loops
+    vertices = {vertex for vertex in range(0, n_leaves + 1)}
+    return edges, vertices
+
+# Create a Wheel Graph
 def create_wheel_graph_edges_and_vertices(n_spokes):
     edges = {(0, vertex): True for vertex in range(1, n_spokes + 1)}
     edges.update({(vertex, vertex + 1): True for vertex in range(1, n_spokes)})
@@ -77,12 +85,16 @@ def simulate_game(edges, vertices, player_scores, current_player, memo):
 
 
 def main():
-    mode = input("Enter 'specific' for a specific number of spokes or 'range' for a range of spokes: ").lower()
+    graph_type = input("Enter 'wheel' for a Wheel Graph or 'hanging' for a Hanging Tree: ").lower()
+    mode = input("Enter 'specific' for a specific number or 'range' for a range: ").lower()
+
+    create_graph = create_wheel_graph_edges_and_vertices if graph_type == 'wheel' else create_hanging_tree_edges_and_vertices
+
     if mode == 'specific':
-        n_spokes = int(input("Enter the number of spokes (3 or more): "))
-        while n_spokes < 3:
-            n_spokes = int(input("Please enter a valid number of spokes (3 or more): "))
-        edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
+        n_elements = int(input("Enter the number of elements (3 or more): "))
+        while n_elements < 3:
+            n_elements = int(input("Please enter a valid number (3 or more): "))
+        edges, vertices = create_graph(n_elements)
         initial_player_scores = [0, 0]
         memo = {}
 
@@ -90,22 +102,22 @@ def main():
         winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
         elapsed_time = time.time() - start_time
 
-        print(f"For {n_spokes} spokes: Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
+        print(f"For {n_elements} elements: Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
     elif mode == 'range':
-        x_value = int(input("Enter the maximum number of spokes (X) for range (3 to X): "))
+        x_value = int(input("Enter the maximum number (X) for the range (3 to X): "))
         while x_value < 3:
-            x_value = int(input("Please enter a valid maximum number of spokes (3 or more): "))
+            x_value = int(input("Please enter a valid number (3 or more): "))
         memo = {}
 
-        for n_spokes in range(3, x_value + 1):
-            edges, vertices = create_wheel_graph_edges_and_vertices(n_spokes)
+        for n_elements in range(3, x_value + 1):
+            edges, vertices = create_graph(n_elements)
             initial_player_scores = [0, 0]
 
             start_time = time.time()
             winner = simulate_game(edges, vertices, initial_player_scores, 0, memo)
             elapsed_time = time.time() - start_time
 
-            print(f"{n_spokes} spokes - Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
+            print(f"{n_elements} elements - Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
     else:
         print("Invalid mode selected. Please enter 'specific' or 'range'.")
 

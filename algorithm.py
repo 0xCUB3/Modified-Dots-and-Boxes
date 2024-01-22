@@ -8,29 +8,30 @@ def create_hanging_tree_edges_and_vertices(n_leaves):
     return edges, vertices
 
 # Create a Hanging Tree Graph with Extra Vertices
-def create_extended_hanging_tree_edges_and_vertices(n_leaves, extra_vertices=0):
+def create_extended_hanging_tree_edges_and_vertices(n_leaves, extra_spokes=0, extra_vertices=0):
     edges = {}
     vertices = {0}  # Central vertex (root)
 
-    # Assign ids for extra vertices, starting from n_leaves + 1
     current_id = n_leaves + 1
-    
-    for vertex in range(1, n_leaves + 1):
-        vertices.add(vertex)
-        if extra_vertices > 0:
-            # Create a path with extra vertices in the first spoke only
-            last_id = 0 # Start from the root
+
+    for spoke in range(1, n_leaves + 1):
+        vertices.add(spoke)
+        
+        # Determine whether to add extra vertices to the current spoke
+        if extra_spokes > 0:
+            extra_spokes -= 1
+            last_id = 0  # Start from the root
             for _ in range(extra_vertices):
                 vertices.add(current_id)
                 edges[(last_id, current_id)] = True  # Connect the last vertex in the path to the current one
                 last_id = current_id
                 current_id += 1
-            edges[(last_id, vertex)] = True
-            # Decrement extra_vertices as it's used for only one spoke
-            extra_vertices -= 1
+            edges[(last_id, spoke)] = True
         else:
-            edges[(0, vertex)] = True  # Directly connect the root to the vertex
-        edges[(vertex, vertex)] = True  # Loop at the leaf
+            edges[(0, spoke)] = True  # Directly connect the root to the spoke
+
+        # Add a loop at each outer vertex
+        edges[(spoke, spoke)] = True
 
     return edges, vertices
 
@@ -120,9 +121,10 @@ def main():
     elif graph_type == 'hanging':
         create_graph = create_hanging_tree_edges_and_vertices
     elif graph_type == 'extended':
-        extra_vertices = int(input("Enter the number of extra vertices to add to one spoke: "))
+        extra_vertices = int(input("Enter the number of extra vertices to add: "))
+        extra_spokes = int(input("Enter the number of spokes to extend with extra vertices: "))
         def create_graph(n_leaves):
-            return create_extended_hanging_tree_edges_and_vertices(n_leaves, extra_vertices)
+            return create_extended_hanging_tree_edges_and_vertices(n_leaves, extra_spokes, extra_vertices)
     else:
         print("Invalid graph type selected.")
         return

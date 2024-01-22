@@ -2,7 +2,7 @@ import time
 from visualize_graph import visualize_graph
 from colorama import Fore, Style, init
 
-# Initialize colorama
+# Initialize Colorama for colored output
 init(autoreset=True)
 
 # Create a Hanging Tree Graph

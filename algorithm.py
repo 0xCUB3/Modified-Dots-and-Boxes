@@ -5,6 +5,12 @@ from colorama import Fore, Style, init
 # Initialize Colorama for colored output
 init(autoreset=True)
 
+# Create a Complete Graph
+def create_complete_graph_edges_and_vertices(n_vertices):
+    edges = {(vertex1, vertex2): True for vertex1 in range(n_vertices) for vertex2 in range(n_vertices) if vertex1 != vertex2}
+    vertices = {vertex for vertex in range(n_vertices)}
+    return edges, vertices
+
 # Create a Hanging Tree Graph
 def create_hanging_tree_edges_and_vertices(n_leaves):
     edges = {(0, vertex): True for vertex in range(1, n_leaves + 1)}
@@ -118,10 +124,12 @@ def simulate_game(edges, vertices, player_scores, current_player, memo):
 
 
 def main():
-    graph_type = input("Enter 'wheel' for a Wheel Graph, 'hanging' for a Hanging Tree, or 'extended' for an Extended Hanging Tree with extra vertices: ").lower()
+    graph_type = input("Enter 'complete' for a Complete Graph, 'wheel' for a Wheel Graph, 'hanging' for a Hanging Tree, or 'extended' for an Extended Hanging Tree with extra vertices: ").lower()
     mode = input("Enter 'specific' for a specific number or 'range' for a range: ").lower()
 
-    if graph_type == 'wheel':
+    if graph_type == 'complete':
+        create_graph = create_complete_graph_edges_and_vertices
+    elif graph_type == 'wheel':
         create_graph = create_wheel_graph_edges_and_vertices
     elif graph_type == 'hanging':
         create_graph = create_hanging_tree_edges_and_vertices

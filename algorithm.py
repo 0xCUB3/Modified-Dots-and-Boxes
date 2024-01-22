@@ -1,4 +1,5 @@
 import time
+from visualize_graph import visualize_graph
 
 # Create a Hanging Tree Graph
 def create_hanging_tree_edges_and_vertices(n_leaves):
@@ -143,6 +144,9 @@ def main():
         elapsed_time = time.time() - start_time
 
         print(f"For {n_elements} elements: Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
+
+        # Call to visualize the graph here
+        visualize_graph(edges, vertices)
     # Find the value for a range of sizes (3 to X)
     elif mode == 'range':
         x_value = int(input("Enter the maximum number (X) for the range (3 to X): "))

@@ -7,6 +7,33 @@ def create_hanging_tree_edges_and_vertices(n_leaves):
     vertices = {vertex for vertex in range(0, n_leaves + 1)}
     return edges, vertices
 
+# Create a Hanging Tree Graph with Extra Vertices
+def create_extended_hanging_tree_edges_and_vertices(n_leaves, extra_vertices=0):
+    edges = {}
+    vertices = {0}  # Central vertex (root)
+
+    # Assign ids for extra vertices, starting from n_leaves + 1
+    current_id = n_leaves + 1
+    
+    for vertex in range(1, n_leaves + 1):
+        vertices.add(vertex)
+        if extra_vertices > 0:
+            # Create a path with extra vertices in the first spoke only
+            last_id = 0 # Start from the root
+            for _ in range(extra_vertices):
+                vertices.add(current_id)
+                edges[(last_id, current_id)] = True  # Connect the last vertex in the path to the current one
+                last_id = current_id
+                current_id += 1
+            edges[(last_id, vertex)] = True
+            # Decrement extra_vertices as it's used for only one spoke
+            extra_vertices -= 1
+        else:
+            edges[(0, vertex)] = True  # Directly connect the root to the vertex
+        edges[(vertex, vertex)] = True  # Loop at the leaf
+
+    return edges, vertices
+
 # Create a Wheel Graph
 def create_wheel_graph_edges_and_vertices(n_spokes):
     edges = {(0, vertex): True for vertex in range(1, n_spokes + 1)}
@@ -85,11 +112,22 @@ def simulate_game(edges, vertices, player_scores, current_player, memo):
 
 
 def main():
-    graph_type = input("Enter 'wheel' for a Wheel Graph or 'hanging' for a Hanging Tree: ").lower()
+    graph_type = input("Enter 'wheel' for a Wheel Graph, 'hanging' for a Hanging Tree, or 'extended' for an Extended Hanging Tree with extra vertices: ").lower()
     mode = input("Enter 'specific' for a specific number or 'range' for a range: ").lower()
 
-    create_graph = create_wheel_graph_edges_and_vertices if graph_type == 'wheel' else create_hanging_tree_edges_and_vertices
+    if graph_type == 'wheel':
+        create_graph = create_wheel_graph_edges_and_vertices
+    elif graph_type == 'hanging':
+        create_graph = create_hanging_tree_edges_and_vertices
+    elif graph_type == 'extended':
+        extra_vertices = int(input("Enter the number of extra vertices to add to one spoke: "))
+        def create_graph(n_leaves):
+            return create_extended_hanging_tree_edges_and_vertices(n_leaves, extra_vertices)
+    else:
+        print("Invalid graph type selected.")
+        return
 
+    # Find the value for 1 size
     if mode == 'specific':
         n_elements = int(input("Enter the number of elements (3 or more): "))
         while n_elements < 3:
@@ -103,6 +141,7 @@ def main():
         elapsed_time = time.time() - start_time
 
         print(f"For {n_elements} elements: Player {winner + 1} wins with perfect play. Time taken: {elapsed_time:.4f} seconds.")
+    # Find the value for a range of sizes (3 to X)
     elif mode == 'range':
         x_value = int(input("Enter the maximum number (X) for the range (3 to X): "))
         while x_value < 3:

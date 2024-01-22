@@ -1,6 +1,8 @@
-# Wheel Graph Dots and Boxes Game
+# Modified Dots and Boxes
 
 A strategic turn-based game for two players, implemented with Pygame. Players take turns selecting an edge on a wheel graph. Once all edges around a vertex are selected, it becomes isolated and is owned by the player. The player with the most vertices when all edges are selected wins the game.
+
+In the algorithm file, a recursive method is used to determine outcomes for various classes of graphs. A summary of these findings can be found below. 
 
 ## Features
 
@@ -8,33 +10,22 @@ A strategic turn-based game for two players, implemented with Pygame. Players ta
 - Colorful interactive GUI with undo and redo functionalities.
 - Simple and intuitive gameplay ideal for quick sessions and strategy enthusiasts.
 
-## Getting Started
+## Discoveries
+In a **complete graph**, player 2 wins for odd K_n and player 1 wins for even K_n, where K_n is a complete graph with n vertices. (Proof TBD)
+![K_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1ca0ca1a-dd1f-422a-952c-fe80c3a93f6d)
+*Example of the complete graph K_5*
 
-### Prerequisites
+In a **wheel graph**, the same pattern is true. (Proof TBD) A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. 
+![Wheel graph with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/b6b48644-02fe-4326-9087-8766c6fa4d91)
+*Example of the wheel graph with 5 spokes*
 
-Before running the game, make sure you have Python and Pygame installed on your system. You can install Pygame using pip:
-```
-pip install pygame
-```
+The next discovery came in a graph family that we defined as **hanging trees**. These graphs are similar to star graphs, but each outer vertex has an extra edge connecting to itself. In this graph family, player 1 wins for odd spokes and player 2 wins for even spokes. (Proof TBD)
+![Hanging Tree with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/aae1f137-863f-4e77-9c0a-378dfa7ccae6)
+*Example of a hanging tree with 5 spokes*
 
-### Installation
-
-Clone the repository to your local machine using the command:
-```
-git clone https://github.com/your-github-username/wheel-graph-dot-boxes.git
-```
-Navigate to the cloned directory:
-```
-cd wheel-graph-dot-boxes
-```
-Run the game with Python:
-```
-python dots_and_boxes.py
-```
-or
-```
-python3 dots_and_boxes.py
-```
+Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proof TBD)
+![Extended Hanging Tree](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
+*Example of a hanging tree with 5 spokes and 2 extra vertices on one of the spokes*
 
 ## How to Play
 

@@ -11,7 +11,7 @@ In the algorithm file, a recursive method is used to determine outcomes for vari
 - Simple and intuitive gameplay ideal for quick sessions and strategy enthusiasts.
 
 ## Discoveries
-In a **complete graph**, player 2 wins for odd K_n and player 1 wins for even K_n, where K_n is a complete graph with n vertices. (Proof TBD)
+In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3 & 4 (mod 4) vertices. (Proof TBD)
 ![K_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1ca0ca1a-dd1f-422a-952c-fe80c3a93f6d)
 *Example of the complete graph K_5*
 

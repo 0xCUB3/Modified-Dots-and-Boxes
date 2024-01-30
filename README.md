@@ -15,7 +15,7 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 ![K_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1ca0ca1a-dd1f-422a-952c-fe80c3a93f6d)
 *Example of the complete graph K_5*
 
-In a **wheel graph**, the same pattern is true. (Proof TBD) A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. 
+A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. 
 ![Wheel graph with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/b6b48644-02fe-4326-9087-8766c6fa4d91)
 *Example of the wheel graph with 5 spokes*
 
@@ -26,6 +26,8 @@ The next discovery came in a graph family that we defined as **hanging trees**. 
 Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proof TBD)
 ![Extended Hanging Tree](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
 *Example of a hanging tree with 5 spokes and 2 extra vertices on one of the spokes*
+
+In a "normal" hanging tree with 2 outer loops, player 2 always wins, but they win by 2 for odd spokes and they win by 3 for even spokes. 
 
 ## How to Play
 

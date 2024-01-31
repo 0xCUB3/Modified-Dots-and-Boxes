@@ -19,6 +19,18 @@ A wheel graph is one where there is a center vertex connected to n outer vertice
 ![Wheel graph with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/b6b48644-02fe-4326-9087-8766c6fa4d91)
 *Example of the wheel graph with 5 spokes*
 
+| Number of Spokes | Move Sequence (until tree found) | Score |
+| -------- | ------- | ------- |
+| 3 | \[(0, 1), (0, 2), (2, 3)]    | (0 - 4) |
+| 4 | \[(0, 1), (0, 2), (0, 3), (0, 4), (1, 2)] | (4 - 1) |
+| 5 | \[(0, 1), (0, 2), (0, 5), (1, 2), (1, 5), (4, 5), (0, 3)] | (2 - 4) |
+| 6 | \[(0, 1), (0, 2), (0, 5), (0, 6), (1, 2), (1, 6), (4, 5), (5, 6), (0, 3)] | (5 - 2) |
+| 7 | \[(0, 1), (0, 2), (0, 3), (0, 6), (0, 7), (1, 2), (1, 7), (2, 3), (5, 6), (6, 7), (0, 4)] | (2 - 6) |
+| 8 | \[(0, 1), (0, 2), (0, 4), (0, 5), (0, 6), (0, 7), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (0, 3)] | (5 - 4) |
+| 9 | \[(0, 1), (0, 2), (0, 3), (0, 5), (0, 6), (0, 7), (0, 8), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (0, 4)] | (4 - 6) |
+
+
+
 The next discovery came in a graph family that we defined as **hanging trees**. These graphs are similar to star graphs, but each outer vertex has an extra edge connecting to itself. In this graph family, player 1 wins for odd spokes and player 2 wins for even spokes. (Proven)
 ![Hanging Tree with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/aae1f137-863f-4e77-9c0a-378dfa7ccae6)
 *Example of a hanging tree with 5 spokes*

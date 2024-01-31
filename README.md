@@ -11,10 +11,13 @@ In the algorithm file, a recursive method is used to determine outcomes for vari
 - Simple and intuitive gameplay ideal for quick sessions and strategy enthusiasts.
 
 ## Discoveries
+
+### Complete Graphs
 In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3 & 4 (mod 4) vertices. (Proof TBD)
 ![K_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1ca0ca1a-dd1f-422a-952c-fe80c3a93f6d)
 *Example of the complete graph K_5*
 
+### Wheel Graphs
 A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. (Proof TBD)
 ![Wheel graph with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/b6b48644-02fe-4326-9087-8766c6fa4d91)
 *Example of the wheel graph with 5 spokes*
@@ -30,7 +33,7 @@ A wheel graph is one where there is a center vertex connected to n outer vertice
 | 9 | \[(0, 1), (0, 2), (0, 3), (0, 5), (0, 6), (0, 7), (0, 8), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (0, 4)] | (4 - 6) |
 
 
-
+### Hanging Trees
 The next discovery came in a graph family that we defined as **hanging trees**. These graphs are similar to star graphs, but each outer vertex has an extra edge connecting to itself. In this graph family, player 1 wins for odd spokes and player 2 wins for even spokes. (Proven)
 ![Hanging Tree with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/aae1f137-863f-4e77-9c0a-378dfa7ccae6)
 *Example of a hanging tree with 5 spokes*

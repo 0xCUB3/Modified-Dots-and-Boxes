@@ -139,11 +139,12 @@ class GameRunner:
         self._memo: Dict[str, int] = {}
 
     def run(self) -> None:
-        net_score = self._net_score(self._initial_graph, depth=0)
+        net_score, sequence = self._net_score(self._initial_graph, depth=0, moves=[])
         # Calculate each player's score based on the net score
         first_player_score = (self._initial_graph.num_vertices + net_score) // 2
         second_player_score = (self._initial_graph.num_vertices - net_score) // 2
         self.print_scores(first_player_score, second_player_score)
+        print(f"Winning Moves Sequence: {sequence}")
     
     def print_scores(self, first_player_score: int, second_player_score: int) -> None:
         if first_player_score > second_player_score:
@@ -153,28 +154,34 @@ class GameRunner:
         else:
             print('Tie game!')
 
-    def _net_score(self, graph: GameGraph, depth: int) -> int:
+    def _net_score(self, graph: GameGraph, depth: int, moves: List[Tuple[int, int]]) -> Tuple[int, List[Tuple[int, int]]]:
         if graph.key in self._memo:
             return self._memo[graph.key]
+        
         if graph.is_tree:
-            self._memo[graph.key] = graph.num_vertices
-            return graph.num_vertices
-        new_depth = depth + 1
-        best_outcome = -1 * graph.num_vertices
-        tried_edges = []
+            # Edge case for trees where the sequence of moves leading to realizing it's a tree is relevant.
+            self._memo[graph.key] = (graph.num_vertices, moves)
+            return graph.num_vertices, moves
+        
+        best_outcome = -graph.num_vertices  # Initialize with the worst possible score
+        best_sequence = moves  # Start with the current sequence
+        
         for e in graph.edges:
-            if e in tried_edges:
-                continue
-            tried_edges.append(e)
+            # Each edge considered for cutting creates a new branch of exploration with its own sequence.
+            new_moves = moves + [e]
             new_graph, points = self._cut_edge(graph, e)
             mult = 1 if points > 0 else -1
-            outcome = points + mult * self._net_score(new_graph, new_depth)
-            if depth == 0:
-                print(f"Cutting edge {e} leads to net score {outcome}.")
-            if outcome > best_outcome:
+            outcome, sequence_for_outcome = self._net_score(new_graph, depth + 1, new_moves)
+            outcome = points + mult * outcome
+
+            if (best_sequence is moves or outcome > best_outcome):  
+                # Found a new best outcome, update the best outcome and its sequence.
                 best_outcome = outcome
-        self._memo[graph.key] = best_outcome
-        return best_outcome
+                best_sequence = sequence_for_outcome
+        
+        # Before returning, ensure this best outcome and its sequence is memoized to avoid re-computation.
+        self._memo[graph.key] = (best_outcome, best_sequence)
+        return best_outcome, best_sequence
 
     def _cut_edge(self,
         graph: GameGraph, edge: Tuple[int, int]

@@ -17,26 +17,61 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 ![K_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1ca0ca1a-dd1f-422a-952c-fe80c3a93f6d)
 *Example of the complete graph K_5*
 
+| Number of Vertices | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | N/A | N/A |
+| 2 | P1 | (1 - 0) |
+| 3 | P2 | (0 - 3) |
+| 4 | P2 | (0 - 4) |
+| 5 | P1 | (4 - 1) |
+| 6 | P1 | (5 - 1) |
+| 7 | P2 | (2 - 5) |
+| 8 | P2 | (2 - 6) |
+| 9 | NF | NF |
+| 10 | NF | NF |
+| 11 | NF | NF |
+| 12 | NF | NF |
+
 ### Wheel Graphs
 A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. (Proof TBD)
 ![Wheel graph with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/b6b48644-02fe-4326-9087-8766c6fa4d91)
 *Example of the wheel graph with 5 spokes*
 
-| Number of Spokes | Move Sequence (until tree found) | Score |
+| Number of Spokes | Winner | Score |
 | -------- | ------- | ------- |
-| 3 | \[(0, 1), (0, 2), (2, 3)]    | (0 - 4) |
-| 4 | \[(0, 1), (0, 2), (0, 3), (0, 4), (1, 2)] | (4 - 1) |
-| 5 | \[(0, 1), (0, 2), (0, 5), (1, 2), (1, 5), (4, 5), (0, 3)] | (2 - 4) |
-| 6 | \[(0, 1), (0, 2), (0, 5), (0, 6), (1, 2), (1, 6), (4, 5), (5, 6), (0, 3)] | (5 - 2) |
-| 7 | \[(0, 1), (0, 2), (0, 3), (0, 6), (0, 7), (1, 2), (1, 7), (2, 3), (5, 6), (6, 7), (0, 4)] | (2 - 6) |
-| 8 | \[(0, 1), (0, 2), (0, 4), (0, 5), (0, 6), (0, 7), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (0, 3)] | (5 - 4) |
-| 9 | \[(0, 1), (0, 2), (0, 3), (0, 5), (0, 6), (0, 7), (0, 8), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (0, 4)] | (4 - 6) |
-
+| 1 | N/A | N/A |
+| 2 | N/A | N/A |
+| 3 | P2 | (0 - 4) |
+| 4 | P1 | (4 - 1) |
+| 5 | P2 | (2 - 4) |
+| 6 | P1 | (5 - 2) |
+| 7 | P2 | (2 - 6) |
+| 8 | P1 | (5 - 4) |
+| 9 | P2 | (4 - 6) |
+| 10 | P1 | (6 - 5) |
+| 11 | P2 | (5 - 7) |
+| 12 | P1 | (7 - 6) |
+* Observation: A pattern seems to appear at 8 spokes...
 
 ### Hanging Trees
 The next discovery came in a graph family that we defined as **hanging trees**. These graphs are similar to star graphs, but each outer vertex has an extra edge connecting to itself. In this graph family, player 1 wins for odd spokes and player 2 wins for even spokes. (Proven)
 ![Hanging Tree with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/aae1f137-863f-4e77-9c0a-378dfa7ccae6)
 *Example of a hanging tree with 5 spokes*
+
+| Number of Spokes | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | P1 | (2 - 0) |
+| 2 | P2 | (0 - 3) |
+| 3 | P1 | (3 - 1) |
+| 4 | P2 | (1 - 4) |
+| 5 | P1 | (4 - 2) |
+| 6 | P2 | (2 - 5) |
+| 7 | P1 | (5 - 3) |
+| 8 | P2 | (3 - 6) |
+| 9 | P1 | (6 - 4) |
+| 10 | P2 | (4 - 7) |
+| 11 | P1 | (7 - 5) |
+| 12 | P2 | (5 - 8) |
 
 Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proof TBD)
 ![Extended Hanging Tree](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
@@ -44,9 +79,41 @@ Afterward, we were interested if the same pattern continued when extra vertices 
 
 In a "normal" hanging tree with 2 outer loops, player 2 always wins, but they win by 2 for odd spokes and they win by 3 for even spokes. (Proven)
 
+| Number of Spokes | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | Tie | (1 - 1) |
+| 2 | P2 | (1 - 2) |
+| 3 | P2 | (1 - 3) |
+| 4 | P2 | (1 - 4) |
+| 5 | P2 | (2 - 4) |
+| 6 | P2 | (2 - 5) |
+| 7 | P2 | (3 - 5) |
+| 8 | P2 | (3 - 6) |
+| 9 | P2 | (4 - 6) |
+| 10 | P2 | (4 - 7) |
+| 11 | P2 | (5 - 7) |
+| 12 | P2 | (5 - 8) |
+
 In a hanging tree with 1 spokes and n outer loops, player 1 wins for odd loops, and it is a tie for even loops. (Proven)
+| Number of Loops | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | P1 | (2 - 0) |
+| 2 | Tie | (1 - 1) |
+| 3 | P1 | (2 - 0) |
+| 4 | Tie | (1 - 1) |
+| 5 | P1 | (2 - 0) |
+...and so on
 
 In a hanging tree with 2 spokes and n outer loops, player 2 always wins. (Proven)
+| Number of Loops | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | P2 | (0 - 3) |
+| 2 | P2 | (1 - 2) |
+| 3 | P2 | (1 - 2) |
+| 4 | P2 | (1 - 2) |
+| 5 | P2 | (1 - 2) |
+...and so on
+
 
 ## How to Play
 

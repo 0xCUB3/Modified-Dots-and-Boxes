@@ -132,25 +132,6 @@ def draw_wheel_graph(edges, vertices, n_spokes, current_player):
         color = VERTEX_COLOR if not player else PLAYER_COLORS[0] if player == 'player 1' else PLAYER_COLORS[1]
         pygame.draw.circle(screen, color, position, VERTEX_RADIUS)
 
-def draw_cycle_graph_with_loops(edges, vertices, loops, current_player):
-    # Draw the number of loops at the top
-    loop_text = INFO_FONT.render(f'Loops: {loops}', True, TEXT_COLOR)
-    screen.blit(loop_text, (5, 5))
-
-    # Draw whose turn at the bottom
-    turn_text = PLAYER_FONT.render(f'Player {current_player + 1} Turn', True, PLAYER_COLORS[current_player])
-    screen.blit(turn_text, (SCREEN_WIDTH // 2 - turn_text.get_width() // 2, SCREEN_HEIGHT - 35))
-
-    # Draw edges
-    for (start_pos, end_pos), active in edges.items():
-        color = ACTIVE_EDGE_COLOR if active else INACTIVE_EDGE_COLOR
-        pygame.draw.line(screen, color, start_pos, end_pos, EDGE_WIDTH)
-
-    # Draw vertices
-    for position, player in vertices.items():
-        color = VERTEX_COLOR if not player else PLAYER_COLORS[0] if player == 'player 1' else PLAYER_COLORS[1]
-        pygame.draw.circle(screen, color, position, VERTEX_RADIUS)
-
 
 def get_clicked_edge(edges, mouse_pos):
     for (start_pos, end_pos), active in edges.items():

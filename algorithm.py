@@ -235,6 +235,14 @@ def edges_for_wheel_graph(spokes: int) -> List[Tuple[int, int]]:
 
     return canonical_edges(edges)
 
+def edges_for_cycle_graph_with_loops(n: int, loops: int) -> List[Tuple[int, int]]:
+    edges: List[Tuple[int, int]] = []
+    for i in range(n):
+        edges.append((i, (i + 1) % n))
+        for _ in range(loops):
+            edges.append((i, i))
+    return canonical_edges(edges)
+
 def edges_from_input_file() -> List[Tuple[int, int]]:
     with open('game_input.txt', 'r') as file:
         lines = file.readlines()
@@ -301,6 +309,10 @@ def main():
         if args.spokes is None:
             raise ValueError('Spokes parameter must be provided for "wheel" type.')
         edges = edges_for_wheel_graph(args.spokes)
+    elif src_type == 'cycle_with_loops':
+        if args.nodes is None or args.loops is None:
+            raise ValueError('Nodes and loops parameters must be provided for "cycle_with_loops" type.')
+        edges = edges_for_cycle_graph_with_loops(args.nodes, args.loops)
     
     GameRunner(edges).run()
 if __name__ == '__main__':

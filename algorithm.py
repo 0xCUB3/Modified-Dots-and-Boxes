@@ -198,19 +198,23 @@ class GameRunner:
         return (new_graph, points)
 
 # Hanging tree with n loops and one spoke extended by m vertices
-def edges_for_hanging_tree_with_loops(spokes: int, loops: int) -> List[Tuple[int, int]]:
+def edges_for_hanging_tree_with_loops(spokes: int, loops: int, extra_vertices: List[int]) -> List[Tuple[int, int]]:
     edges: List[Tuple[int, int]] = []
     max_vertex_id = 0
-    # 0 is the root vertex
+
+    # Connect each spoke to the root (vertex 0) and extend each spoke with extra vertices
     for spoke in range(1, spokes + 1):
-        # Connect each spoke to the root
-        edges.append((0, spoke))
-        # Determine the current max vertex id
-        max_vertex_id = max(max_vertex_id, spoke)
+        # Connect extra vertices between the root and the spoke
+        prev_vertex = 0  # Start with the root
+        for _ in range(extra_vertices[spoke - 1] + 1):
+            max_vertex_id += 1
+            edges.append((prev_vertex, max_vertex_id))
+            prev_vertex = max_vertex_id
+
         # Create loops at each outer vertex
         for _ in range(loops):
-            edges.append((spoke, spoke))
-
+            edges.append((max_vertex_id, max_vertex_id))
+    print("List of edges: " + str(edges))
     return canonical_edges(edges)
 
 def edges_for_complete_graph(n: int) -> List[Tuple[int, int]]:
@@ -293,6 +297,11 @@ def main():
         type=int,
         help='Number of loops for a hanging tree graph.'
     )
+    parser.add_argument(
+        '--extra_vertices',
+        type=str,
+        help='Extra vertices for a hanging tree graph.'
+    )
     
     args = parser.parse_args()
     src_type: str = args.type
@@ -300,7 +309,15 @@ def main():
     if src_type == 'hanging_tree':
         if args.spokes is None or args.loops is None:
             raise ValueError('Spokes and loops parameters must be provided for "hanging_tree" type.')
-        edges = edges_for_hanging_tree_with_loops(args.spokes, args.loops)
+        if args.extra_vertices is None:
+            extra_vertices = [0] * args.spokes
+            edges = edges_for_hanging_tree_with_loops(args.spokes, args.loops, extra_vertices)
+        else:
+            extra_vertices = args.extra_vertices.split(',')
+            extra_vertices = [int(v) for v in extra_vertices]
+            if len(extra_vertices) != args.spokes:
+                raise ValueError('Extra vertices list must have the same length as the number of spokes.')
+            edges = edges_for_hanging_tree_with_loops(args.spokes, args.loops, extra_vertices)
     elif src_type == 'complete':
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "complete" type.')

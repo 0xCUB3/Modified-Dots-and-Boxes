@@ -114,6 +114,7 @@ In a hanging tree with 2 spokes and n outer loops, player 2 always wins. (Proven
 | 5 | P2 | (1 - 2) |
 ...and so on
 
+For more complicated hanging tree revelations, please see [hanging_trees.md](https://github.com/0xCUB3/Modified-Dots-and-Boxes/blob/main/hanging_trees.md)
 
 ## How to Play
 

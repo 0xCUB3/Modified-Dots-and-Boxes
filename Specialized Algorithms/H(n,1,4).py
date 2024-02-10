@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict, Set
 import argparse
 import time
+import math
 
 class Vertex:
     def __init__(self, raw_id: int, neighbors: List[int]) -> None:
@@ -166,7 +167,8 @@ class GameRunner:
 
         # Identify edges for the first move
         if first_move:
-            edges_to_consider = graph.edges[:4]
+            index =  int(math.ceil(graph.num_vertices / 3))
+            edges_to_consider = graph.edges[:index]
         else:
             edges_to_consider = graph.edges
         

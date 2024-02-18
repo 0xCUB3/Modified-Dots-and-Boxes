@@ -27,7 +27,7 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 | 6 | P1 | (5 - 1) |
 | 7 | P2 | (2 - 5) |
 | 8 | P2 | (2 - 6) |
-| 9 | NF | NF |
+| 9 | P1 | (6 - 3) |
 | 10 | NF | NF |
 | 11 | NF | NF |
 | 12 | NF | NF |

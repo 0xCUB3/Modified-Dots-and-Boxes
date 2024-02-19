@@ -20,7 +20,7 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 | Number of Vertices | Winner | Score |
 | -------- | ------- | ------- |
 | 1 | N/A | N/A |
-| 2 | P1 | (1 - 0) |
+| 2 | P1 | (2 - 0) |
 | 3 | P2 | (0 - 3) |
 | 4 | P2 | (0 - 4) |
 | 5 | P1 | (4 - 1) |

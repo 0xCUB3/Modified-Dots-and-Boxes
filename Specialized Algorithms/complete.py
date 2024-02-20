@@ -1,4 +1,4 @@
-from typing import Tuple, List, Dict, Set
+from typing import Tuple, List
 import argparse
 import sys
 import time
@@ -87,6 +87,10 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "complete" type.')
         _ = run(nx.complete_graph(args.nodes))
+    elif src_type == 'wheel':
+        if args.nodes is None:
+            raise ValueError('Nodes parameter must be provided for "wheel" type.')
+        _ = run(nx.wheel_graph(args.nodes + 1))
 
 if __name__ == '__main__':
     main()

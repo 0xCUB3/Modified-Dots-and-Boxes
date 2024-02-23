@@ -135,6 +135,19 @@ A friendship graph is one with a center vertex and n triangles around it. Player
 | 7 | P2 | (6 - 9) |
 | 8 | P1 | (9 - 8) |
 
+But now I hear you ask, what about friendship graphs with squares instead of triangles? You asked that, right? RIGHT?????
+
+| Number of Squares | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | P2 | (0 - 4) |
+| 2 | P1 | (3 - 4) |
+| 3 | P2 | (4 - 6) |
+| 4 | P1 | (5 - 8) |
+| 5 | P2 | (6 - 10) |
+| 6 | P1 | (7 - 12) |
+| 7 | P2 | (8 - 14) |
+| 8 | P1 | (9 - 16) |
+
 ## How to Play
 
 1. Enter the desired number of spokes at the start screen.

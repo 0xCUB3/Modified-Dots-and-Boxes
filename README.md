@@ -121,6 +121,9 @@ The Petersen graph is a common graph used to prove or disprove a lot of graph th
 
 ### Friendship graphs
 A friendship graph is one with a center vertex and n triangles around it. Player 1 wins by 1 for odd n and player 2 wins by 3 for even n (Proof TBD). 
+![F_3](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1c819731-543b-43d8-9465-1753d562dd45)
+
+
 | Number of Triangles | Winner | Score |
 | -------- | ------- | ------- |
 | 1 | P2 | (0 - 3) |

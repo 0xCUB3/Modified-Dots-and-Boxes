@@ -116,6 +116,9 @@ In a hanging tree with 2 spokes and n outer loops, player 2 always wins. (Proven
 
 For more complicated hanging tree revelations, please see [hanging_trees.md](https://github.com/0xCUB3/Modified-Dots-and-Boxes/blob/main/hanging_trees.md)
 
+### Petersen graph
+The Petersen graph is a common graph used to prove or disprove a lot of graph theory-related theorems. Player 1 wins on Petersen with a score of (9 - 1) (Proof TBD). 
+
 ## How to Play
 
 1. Enter the desired number of spokes at the start screen.

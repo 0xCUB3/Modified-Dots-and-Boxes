@@ -119,6 +119,19 @@ For more complicated hanging tree revelations, please see [hanging_trees.md](htt
 ### Petersen graph
 The Petersen graph is a common graph used to prove or disprove a lot of graph theory-related theorems. Player 1 wins on Petersen with a score of (9 - 1) (Proof TBD). 
 
+### Friendship graphs
+A friendship graph is one with a center vertex and n triangles around it. Player 1 wins by 1 for odd n and player 2 wins by 3 for even n (Proof TBD). 
+| Number of Triangles | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | P2 | (0 - 3) |
+| 2 | P1 | (3 - 2) |
+| 3 | P2 | (2 - 5) |
+| 4 | P1 | (5 - 4) |
+| 5 | P2 | (4 - 7) |
+| 6 | P1 | (7 - 6) |
+| 7 | P2 | (6 - 9) |
+| 8 | P1 | (9 - 8) |
+
 ## How to Play
 
 1. Enter the desired number of spokes at the start screen.

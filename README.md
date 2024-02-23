@@ -140,13 +140,13 @@ But now I hear you ask, what about friendship graphs with squares instead of tri
 | Number of Squares | Winner | Score |
 | -------- | ------- | ------- |
 | 1 | P2 | (0 - 4) |
-| 2 | P1 | (3 - 4) |
+| 2 | P2 | (3 - 4) |
 | 3 | P2 | (4 - 6) |
-| 4 | P1 | (5 - 8) |
+| 4 | P2 | (5 - 8) |
 | 5 | P2 | (6 - 10) |
-| 6 | P1 | (7 - 12) |
+| 6 | P2 | (7 - 12) |
 | 7 | P2 | (8 - 14) |
-| 8 | P1 | (9 - 16) |
+| 8 | P2 | (9 - 16) |
 
 ## How to Play
 

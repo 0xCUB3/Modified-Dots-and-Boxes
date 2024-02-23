@@ -28,7 +28,7 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 | 7 | P2 | (2 - 5) |
 | 8 | P2 | (2 - 6) |
 | 9 | P1 | (6 - 3) |
-| 10 | NF | NF |
+| 10 | P1 | (6 - 4) |
 | 11 | NF | NF |
 | 12 | NF | NF |
 
@@ -115,6 +115,9 @@ In a hanging tree with 2 spokes and n outer loops, player 2 always wins. (Proven
 ...and so on
 
 For more complicated hanging tree revelations, please see [hanging_trees.md](https://github.com/0xCUB3/Modified-Dots-and-Boxes/blob/main/hanging_trees.md)
+
+### Petersen graph
+The Petersen graph is a common graph used to prove or disprove a lot of graph theory-related theorems. Player 1 wins on Petersen with a score of (9 - 1) (Proof TBD). 
 
 ## How to Play
 

@@ -73,6 +73,37 @@ def draw_and_save_graph(graph: nx.Graph) -> None:
     plt.savefig('graph.png')  # Save the figure as a PNG file.
     plt.close()  # Close the figure to prevent it from being displayed in a window.
 
+def create_friendship_graph(n: int, loop_size: int) -> nx.Graph:
+    """
+    Creates a generalized friendship graph with n loops, where each loop 
+    has a specified size (loop_size).
+
+    :param n: Number of loops connected to the central vertex.
+    :param loop_size: The size of each loop (including the central vertex).
+    :return: A NetworkX graph representing the generalized friendship graph.
+    """
+    G = nx.Graph()
+    central_vertex = 0
+    G.add_node(central_vertex)
+    
+    for loop_index in range(1, n + 1):
+        previous_vertex = None
+        for vertex_offset in range(loop_size - 1):
+            current_vertex = (loop_index - 1) * (loop_size - 1) + vertex_offset + 1
+            G.add_node(current_vertex)
+            if previous_vertex is not None:
+                G.add_edge(previous_vertex, current_vertex)
+            else:
+                G.add_edge(central_vertex, current_vertex)
+            previous_vertex = current_vertex
+        
+        # Connecting the last vertex of the loop back to the central vertex
+        # and the first vertex of the loop to complete the loop
+        if loop_size > 2:
+            G.add_edge(previous_vertex, central_vertex)
+        
+    return G
+
 def main():
     sys.setrecursionlimit(10000)
     parser = argparse.ArgumentParser(description='Solve a game.')
@@ -86,6 +117,11 @@ def main():
         '--nodes',
         type=int,
         help='Number of nodes for a complete graph.'
+    )
+    parser.add_argument(
+        '--loops',
+        type=int,
+        help='Number of loops for a friendship graph.'
     )
 
     args = parser.parse_args()
@@ -101,6 +137,10 @@ def main():
         _ = run(nx.wheel_graph(args.nodes+1))
     elif src_type == 'petersen':
         _ = run(nx.petersen_graph())
+    elif src_type == 'friendship':
+        if args.nodes is None or args.loops is None:
+            raise ValueError('Nodes & loops parameters must be provided for "friendship" type.')
+        _ = run(create_friendship_graph(args.nodes, args.loops))
 
 if __name__ == '__main__':
     main()

@@ -3,8 +3,10 @@ import argparse
 import sys
 import time
 import networkx as nx
+import matplotlib.pyplot as plt
 
 def run(graph: nx.Graph) -> None:
+    draw_and_save_graph(graph)
     start_time = time.time()
     memo = {}
     net_score, sequence = _net_score(graph=graph, depth=0, moves=[], memo=memo)
@@ -65,6 +67,12 @@ def _net_score(graph: nx.Graph, depth: int, moves: List[Tuple[int, int]], memo: 
     memo[graph_key] = (best_outcome, best_sequence)
     return best_outcome, best_sequence
 
+def draw_and_save_graph(graph: nx.Graph) -> None:
+    plt.figure(figsize=(10, 8))  # Set the figure size (width, height) in inches.
+    nx.draw(graph, with_labels=True, node_size=500, node_color='skyblue', font_size=10, font_weight='bold')
+    plt.savefig('graph.png')  # Save the figure as a PNG file.
+    plt.close()  # Close the figure to prevent it from being displayed in a window.
+
 def main():
     sys.setrecursionlimit(10000)
     parser = argparse.ArgumentParser(description='Solve a game.')
@@ -90,7 +98,9 @@ def main():
     elif src_type == 'wheel':
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "wheel" type.')
-        _ = run(nx.wheel_graph(args.nodes + 1))
+        _ = run(nx.wheel_graph(args.nodes+1))
+    elif src_type == 'petersen':
+        _ = run(nx.petersen_graph())
 
 if __name__ == '__main__':
     main()

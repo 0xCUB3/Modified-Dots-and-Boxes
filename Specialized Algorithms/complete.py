@@ -42,7 +42,12 @@ def _net_score(graph: nx.Graph, depth: int, moves: List[Tuple[int, int]], memo: 
         # Each edge considered for cutting creates a new branch of exploration with its own sequence.
         new_moves = moves + [e]
         test_graph = graph.copy()
-        if test_graph.degree(e[0]) == 1:
+        if test_graph.degree(e[0]) == 1 and test_graph.degree(e[1]) == 1:
+            points = 2
+            test_graph.remove_edge(*e)
+            test_graph.remove_node(e[0])
+            test_graph.remove_node(e[1])
+        elif test_graph.degree(e[0]) == 1:
             points = 1
             test_graph.remove_edge(*e)
             test_graph.remove_node(e[0])
@@ -74,14 +79,6 @@ def draw_and_save_graph(graph: nx.Graph) -> None:
     plt.close()  # Close the figure to prevent it from being displayed in a window.
 
 def create_friendship_graph(n: int, loop_size: int) -> nx.Graph:
-    """
-    Creates a generalized friendship graph with n loops, where each loop 
-    has a specified size (loop_size).
-
-    :param n: Number of loops connected to the central vertex.
-    :param loop_size: The size of each loop (including the central vertex).
-    :return: A NetworkX graph representing the generalized friendship graph.
-    """
     G = nx.Graph()
     central_vertex = 0
     G.add_node(central_vertex)

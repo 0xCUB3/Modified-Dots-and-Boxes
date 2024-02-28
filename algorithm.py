@@ -239,12 +239,35 @@ def edges_for_wheel_graph(spokes: int) -> List[Tuple[int, int]]:
 
     return canonical_edges(edges)
 
-def edges_for_cycle_graph_with_loops(n: int, loops: int) -> List[Tuple[int, int]]:
+def edges_for_cycle_graph_with_loops(n: int, loop_size: int) -> List[Tuple[int, int]]:
     edges: List[Tuple[int, int]] = []
-    for i in range(n):
-        edges.append((i, (i + 1) % n))
-        for _ in range(loops):
-            edges.append((i, i))
+    for loop_index in range(1, n + 1):
+        previous_vertex = None
+        for vertex_offset in range(loop_size - 1):
+            current_vertex = (loop_index - 1) * (loop_size - 1) + vertex_offset + 1
+            if previous_vertex is not None:
+                edges.append((previous_vertex, current_vertex))
+            else:
+                edges.append((0, current_vertex))
+            previous_vertex = current_vertex
+        
+        # Connecting the last vertex of the loop back to the central vertex
+        # and the first vertex of the loop to complete the loop
+        if loop_size > 2:
+            edges.append((previous_vertex, 0))
+
+    return canonical_edges(edges)
+
+def edges_for_friendship_graph(n: int, loop_length: int) -> List[Tuple[int, int]]:
+    edges: List[Tuple[int, int]] = []
+    offset = 0
+    for i in range(1, n + 1):
+        edges.append((0, i + offset))
+        for _ in range(loop_length - 2):
+            edges.append((i + offset, i + offset + 1))
+            offset += 1
+        edges.append((i + offset, 0))
+    
     return canonical_edges(edges)
 
 def edges_from_input_file() -> List[Tuple[int, int]]:
@@ -330,6 +353,10 @@ def main():
         if args.nodes is None or args.loops is None:
             raise ValueError('Nodes and loops parameters must be provided for "cycle_with_loops" type.')
         edges = edges_for_cycle_graph_with_loops(args.nodes, args.loops)
+    elif src_type == 'friendship':
+        if args.nodes is None or args.loops is None:
+            raise ValueError('Nodes & loops parameters must be provided for "friendship" type.')
+        edges = edges_for_friendship_graph(args.nodes, args.loops)
     
     GameRunner(edges).run()
 if __name__ == '__main__':

@@ -27,8 +27,8 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 | 6 | P1 | (5 - 1) |
 | 7 | P2 | (2 - 5) |
 | 8 | P2 | (2 - 6) |
-| 9 | P1 | (6 - 3) |
-| 10 | P1 | (6 - 4) |
+| 9 | P1 | (7 - 2) |
+| 10 | P1 | (7 - 3)? |
 | 11 | NF | NF |
 | 12 | NF | NF |
 
@@ -140,13 +140,13 @@ But now I hear you ask, what about friendship graphs with squares instead of tri
 | Number of Squares | Winner | Score |
 | -------- | ------- | ------- |
 | 1 | P2 | (0 - 4) |
-| 2 | P2 | (3 - 4) |
+| 2 | P2 | (2 - 5) |
 | 3 | P2 | (4 - 6) |
-| 4 | P2 | (5 - 8) |
-| 5 | P2 | (6 - 10) |
-| 6 | P2 | (7 - 12) |
-| 7 | P2 | (8 - 14) |
-| 8 | P2 | (9 - 16) |
+| 4 | P2 | (6 - 7) |
+| 5 | P2 | (7 - 9) |
+| 6 | P2 | NF |
+| 7 | P2 | NF |
+| 8 | P2 | NF |
 
 ## How to Play
 

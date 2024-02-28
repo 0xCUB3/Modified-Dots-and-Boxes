@@ -144,9 +144,9 @@ But now I hear you ask, what about friendship graphs with squares instead of tri
 | 3 | P2 | (4 - 6) |
 | 4 | P2 | (6 - 7) |
 | 5 | P2 | (7 - 9) |
-| 6 | P2 | NF |
-| 7 | P2 | NF |
-| 8 | P2 | NF |
+| 6 | P2 | (9 - 10) |
+| 7 | P2 | (10 - 12) |
+| 8 | P2 | (12 - 13) |
 
 ## How to Play
 

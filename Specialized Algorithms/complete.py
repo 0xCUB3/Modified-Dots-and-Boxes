@@ -30,7 +30,7 @@ def _net_score(graph: nx.Graph, depth: int, moves: List[Tuple[int, int]], memo: 
     if graph_key in memo:
         return memo[graph_key]
     
-    if nx.is_tree(graph):
+    if nx.is_forest(graph):
         # Edge case for trees where the sequence of moves leading to realizing it's a tree is relevant.
         memo[graph_key] = (graph.number_of_nodes(), moves)
         return graph.number_of_nodes(), moves
@@ -98,7 +98,7 @@ def create_friendship_graph(n: int, loop_size: int) -> nx.Graph:
         # and the first vertex of the loop to complete the loop
         if loop_size > 2:
             G.add_edge(previous_vertex, central_vertex)
-        
+
     return G
 
 def main():
@@ -138,6 +138,11 @@ def main():
         if args.nodes is None or args.loops is None:
             raise ValueError('Nodes & loops parameters must be provided for "friendship" type.')
         _ = run(create_friendship_graph(args.nodes, args.loops))
+    elif src_type == 'other':
+        G = nx.Graph()
+        G.add_nodes_from([1, 2, 3, 4])
+        G.add_edges_from([(1,2), (2,3)])
+        _ = run(G)
 
 if __name__ == '__main__':
     main()

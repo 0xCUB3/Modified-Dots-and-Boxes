@@ -73,7 +73,7 @@ The next discovery came in a graph family that we defined as **hanging trees**. 
 | 11 | P1 | (7 - 5) |
 | 12 | P2 | (5 - 8) |
 
-Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proof TBD)
+Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proven)
 ![Extended Hanging Tree](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
 *Example of a hanging tree with 5 spokes and 2 extra vertices on one of the spokes*
 

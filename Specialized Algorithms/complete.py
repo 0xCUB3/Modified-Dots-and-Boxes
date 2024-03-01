@@ -75,7 +75,7 @@ def _net_score(graph: nx.Graph, depth: int, moves: List[Tuple[int, int]], memo: 
 def draw_and_save_graph(graph: nx.Graph) -> None:
     plt.figure(figsize=(10, 8))  # Set the figure size (width, height) in inches.
     nx.draw(graph, with_labels=True, node_size=500, node_color='skyblue', font_size=10, font_weight='bold')
-    plt.savefig('graph.png')  # Save the figure as a PNG file.
+    plt.savefig('graph.png')
     plt.close()  # Close the figure to prevent it from being displayed in a window.
 
 def create_friendship_graph(n: int, loop_size: int) -> nx.Graph:
@@ -127,7 +127,8 @@ def main():
     if src_type == 'complete':
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "complete" type.')
-        _ = run(nx.complete_graph(args.nodes))
+        G = nx.complete_graph(args.nodes)
+        _ = run(G)
     elif src_type == 'wheel':
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "wheel" type.')

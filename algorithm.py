@@ -171,7 +171,6 @@ class GameRunner:
             new_moves = moves + [e]
             new_graph, points = self._cut_edge(graph, e)
             mult = 1 if points > 0 else -1
-            print(mult)
             outcome, sequence_for_outcome = self._net_score(new_graph, depth + 1, new_moves)
             outcome = points + mult * outcome
 

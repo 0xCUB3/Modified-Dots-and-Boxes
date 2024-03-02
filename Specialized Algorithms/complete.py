@@ -42,22 +42,32 @@ def _net_score(graph: nx.Graph, depth: int, moves: List[Tuple[int, int]], memo: 
         # Each edge considered for cutting creates a new branch of exploration with its own sequence.
         new_moves = moves + [e]
         test_graph = graph.copy()
-        if test_graph.degree(e[0]) == 1 and test_graph.degree(e[1]) == 1:
-            points = 2
-            test_graph.remove_edge(*e)
-            test_graph.remove_node(e[0])
-            test_graph.remove_node(e[1])
-        elif test_graph.degree(e[0]) == 1:
-            points = 1
-            test_graph.remove_edge(*e)
-            test_graph.remove_node(e[0])
-        elif graph.degree(e[1]) == 1:
-            points = 1
-            test_graph.remove_edge(*e)
-            test_graph.remove_node(e[1])
+        if e[0] != e[1]:
+            if test_graph.degree(e[0]) == 1 and test_graph.degree(e[1]) == 1:
+                points = 2
+                test_graph.remove_edge(*e)
+                test_graph.remove_node(e[0])
+                test_graph.remove_node(e[1])
+            elif test_graph.degree(e[0]) == 1:
+                points = 1
+                test_graph.remove_edge(*e)
+                test_graph.remove_node(e[0])
+            elif graph.degree(e[1]) == 1:
+                points = 1
+                test_graph.remove_edge(*e)
+                test_graph.remove_node(e[1])
+            else:
+                points = 0
+                test_graph.remove_edge(*e)
         else:
-            points = 0
-            test_graph.remove_edge(*e)
+            if test_graph.degree(e[0]) == 1:
+                points = 1
+                test_graph.remove_edge(*e)
+                test_graph.remove_node(e[0])
+                test_graph.remove_node(e[1])
+            else:
+                points = 0
+                test_graph.remove_edge(*e)
 
         mult = 1 if points > 0 else -1
         outcome, sequence_for_outcome = _net_score(test_graph, depth + 1, new_moves, memo)

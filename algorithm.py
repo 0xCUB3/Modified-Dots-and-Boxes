@@ -147,6 +147,11 @@ def create_balloon_path_graph(n: int) -> nx.Graph:
         G.add_edge(vertex, vertex)
     return G
 
+def create_balloon_cycle_graph(n: int) -> nx.Graph:
+    G = create_balloon_path_graph(n)
+    G.add_edge(n - 1, 0)
+    return G
+
 def main():
     sys.setrecursionlimit(10000)
     parser = argparse.ArgumentParser(description='Solve a game.')
@@ -189,6 +194,10 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "balloon_path" type.')
         _ = run(create_balloon_path_graph(args.nodes))
+    elif src_type == 'balloon_cycle':
+        if args.nodes is None:
+            raise ValueError('Nodes parameter must be provided for "balloon_cycle" type.')
+        _ = run(create_balloon_cycle_graph(args.nodes))
     elif src_type == 'other':
         G = nx.Graph()
         G.add_nodes_from([1, 2, 3, 4])

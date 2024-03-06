@@ -148,6 +148,21 @@ But now I hear you ask, what about friendship graphs with squares instead of tri
 | 7 | P2 | (10 - 12) |
 | 8 | P2 | (12 - 13) |
 
+### Balloon Path graphs
+The naming is getting a bit vain, but balloon paths and ferris wheel graphs have potential to help us solve wheels. For balloon paths, P1 wins for odd n and there is a tie for even n (Proven)
+![BP_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/8ea1b8f5-a583-4610-aad3-64e671852aca)
+
+| Number of Vertices | Winner | Score |
+| -------- | ------- | ------- |
+| 3 | P1 | (3 - 0) |
+| 4 | Tie | (2 - 2) |
+| 5 | P2 | (3 - 2) |
+| 6 | Tie | (3 - 3) |
+| 7 | P1 | (5 - 2) |
+| 8 | Tie | (4 - 4) |
+| 9 | P1 | (5 - 4) |
+| 10 | Tie | (5 - 5) |
+
 ## How to Play
 
 1. Enter the desired number of spokes at the start screen.

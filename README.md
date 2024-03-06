@@ -156,7 +156,7 @@ The naming is getting a bit vain, but balloon paths and ferris wheel graphs have
 | -------- | ------- | ------- |
 | 3 | P1 | (3 - 0) |
 | 4 | Tie | (2 - 2) |
-| 5 | P2 | (3 - 2) |
+| 5 | P1 | (3 - 2) |
 | 6 | Tie | (3 - 3) |
 | 7 | P1 | (5 - 2) |
 | 8 | Tie | (4 - 4) |

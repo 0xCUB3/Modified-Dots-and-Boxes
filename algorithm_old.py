@@ -1,7 +1,5 @@
-from typing import List, Tuple, Dict, Set
+from typing import Tuple, List, Dict, Set
 import argparse
-import time
-import math
 
 class Vertex:
     def __init__(self, raw_id: int, neighbors: List[int]) -> None:
@@ -141,7 +139,7 @@ class GameRunner:
         self._memo: Dict[str, int] = {}
 
     def run(self) -> None:
-        net_score, sequence = self._net_score(self._initial_graph, depth=0, moves=[], first_move=True)
+        net_score, sequence = self._net_score(self._initial_graph, depth=0, moves=[])
         # Calculate each player's score based on the net score
         first_player_score = (self._initial_graph.num_vertices + net_score) // 2
         second_player_score = (self._initial_graph.num_vertices - net_score) // 2
@@ -156,7 +154,7 @@ class GameRunner:
         else:
             print('Tie game!')
 
-    def _net_score(self, graph: GameGraph, depth: int, moves: List[Tuple[int, int]], first_move: bool = False) -> Tuple[int, List[Tuple[int, int]]]:
+    def _net_score(self, graph: GameGraph, depth: int, moves: List[Tuple[int, int]]) -> Tuple[int, List[Tuple[int, int]]]:
         if graph.key in self._memo:
             return self._memo[graph.key]
         
@@ -164,18 +162,11 @@ class GameRunner:
             # Edge case for trees where the sequence of moves leading to realizing it's a tree is relevant.
             self._memo[graph.key] = (graph.num_vertices, moves)
             return graph.num_vertices, moves
-
-        # Identify edges for the first move
-        if first_move:
-            index =  int(math.ceil(graph.num_vertices / 3))
-            edges_to_consider = graph.edges[:index]
-        else:
-            edges_to_consider = graph.edges
         
         best_outcome = -graph.num_vertices  # Initialize with the worst possible score
         best_sequence = moves  # Start with the current sequence
         
-        for e in edges_to_consider:
+        for e in graph.edges:
             # Each edge considered for cutting creates a new branch of exploration with its own sequence.
             new_moves = moves + [e]
             new_graph, points = self._cut_edge(graph, e)
@@ -183,7 +174,7 @@ class GameRunner:
             outcome, sequence_for_outcome = self._net_score(new_graph, depth + 1, new_moves)
             outcome = points + mult * outcome
 
-            if (outcome > best_outcome):  
+            if (best_sequence is moves or outcome > best_outcome):  
                 # Found a new best outcome, update the best outcome and its sequence.
                 best_outcome = outcome
                 best_sequence = sequence_for_outcome
@@ -207,40 +198,166 @@ class GameRunner:
         return (new_graph, points)
 
 # Hanging tree with n loops and one spoke extended by m vertices
-def edges_for_hanging_tree_with_loops(spokes: int, loops: int, extra_vertices: int) -> List[Tuple[int, int]]:
+def edges_for_hanging_tree_with_loops(spokes: int, loops: int, extra_vertices: List[int]) -> List[Tuple[int, int]]:
     edges: List[Tuple[int, int]] = []
     max_vertex_id = 0
 
+    # Connect each spoke to the root (vertex 0) and extend each spoke with extra vertices
     for spoke in range(1, spokes + 1):
-        if spoke > 1:
-            if edges[-1][0] == edges[-2][0] and edges[-1][1] == edges[-2][1]:
-                continue  # Skip identical spokes
-        # Connect the spoke to the root
-        prev_vertex = 0
-        for _ in range(extra_vertices + 1):
+        # Connect extra vertices between the root and the spoke
+        prev_vertex = 0  # Start with the root
+        for _ in range(extra_vertices[spoke - 1] + 1):
             max_vertex_id += 1
             edges.append((prev_vertex, max_vertex_id))
             prev_vertex = max_vertex_id
-    
-        # Connect loops (self-loops at the outer vertex) if specified
+
+        # Create loops at each outer vertex
         for _ in range(loops):
             edges.append((max_vertex_id, max_vertex_id))
     print("List of edges: " + str(edges))
     return canonical_edges(edges)
 
+def edges_for_complete_graph(n: int) -> List[Tuple[int, int]]:
+    edges: List[Tuple[int, int]] = []
+    for i in range(n - 1):
+        for j in range(i + 1, n):
+            edges.append((i, j))
+    return canonical_edges(edges)
+
+def edges_for_wheel_graph(spokes: int) -> List[Tuple[int, int]]:
+    if spokes < 3:
+        raise ValueError('Wheel graph must have at least 3 spokes.')
+
+    # The hub of the wheel is vertex 0, and the outer vertices are 1 through spokes.
+    edges: List[Tuple[int, int]] = []
+    for spoke in range(1, spokes + 1):
+        # Connect the hub to each spoke.
+        edges.append((0, spoke))
+        # Connect each outer vertex to the next, forming a cycle.
+        next_spoke = spoke + 1 if spoke < spokes else 1
+        edges.append((spoke, next_spoke))
+
+    return canonical_edges(edges)
+
+def edges_for_cycle_graph_with_loops(n: int, loop_size: int) -> List[Tuple[int, int]]:
+    edges: List[Tuple[int, int]] = []
+    for loop_index in range(1, n + 1):
+        previous_vertex = None
+        for vertex_offset in range(loop_size - 1):
+            current_vertex = (loop_index - 1) * (loop_size - 1) + vertex_offset + 1
+            if previous_vertex is not None:
+                edges.append((previous_vertex, current_vertex))
+            else:
+                edges.append((0, current_vertex))
+            previous_vertex = current_vertex
+        
+        # Connecting the last vertex of the loop back to the central vertex
+        # and the first vertex of the loop to complete the loop
+        if loop_size > 2:
+            edges.append((previous_vertex, 0))
+
+    return canonical_edges(edges)
+
+def edges_for_friendship_graph(n: int, loop_length: int) -> List[Tuple[int, int]]:
+    edges: List[Tuple[int, int]] = []
+    offset = 0
+    for i in range(1, n + 1):
+        edges.append((0, i + offset))
+        for _ in range(loop_length - 2):
+            edges.append((i + offset, i + offset + 1))
+            offset += 1
+        edges.append((i + offset, 0))
+    
+    return canonical_edges(edges)
+
+def edges_from_input_file() -> List[Tuple[int, int]]:
+    with open('game_input.txt', 'r') as file:
+        lines = file.readlines()
+    edges = [
+        (int(line.split(',')[0]), int(line.split(',')[1])) for line in lines
+    ]
+    return canonical_edges(edges)
+
+def edges_for_m_by_n_grid(m: int, n: int) -> List[Tuple[int, int]]:
+    edges: List[Tuple[int, int]] = []
+    for i in range(m):
+        for j in range(n):
+            vertex = i * n + j
+            if i == 0:
+                edges.append((vertex, vertex))
+            if i == m - 1:
+                edges.append((vertex, vertex))
+            else:
+                edges.append((vertex, vertex + n))
+            if j == 0:
+                edges.append((vertex, vertex))                    
+            if j == n - 1:
+                edges.append((vertex, vertex))
+            else:
+                edges.append((vertex, vertex + 1))
+    return canonical_edges(edges)
+
 def main():
     parser = argparse.ArgumentParser(description='Solve a game.')
     parser.add_argument(
+        '--type',
+        default='file',
+        type=str,
+        help='Edge source type name (defaults to "file").'
+    )
+    parser.add_argument(
+        '--nodes',
+        type=int,
+        help='Number of nodes for a complete graph.'
+    )
+    parser.add_argument(
         '--spokes',
         type=int,
-        help='Number of spokes for a hanging tree graph.'
+        help='Number of spokes for a wheel graph.'
+    )
+    parser.add_argument(
+        '--loops',
+        type=int,
+        help='Number of loops for a hanging tree graph.'
+    )
+    parser.add_argument(
+        '--extra_vertices',
+        type=str,
+        help='Extra vertices for a hanging tree graph.'
     )
     
     args = parser.parse_args()
-    edges = edges_for_hanging_tree_with_loops(args.spokes, 1, 2)
+    src_type: str = args.type
+
+    if src_type == 'hanging_tree':
+        if args.spokes is None or args.loops is None:
+            raise ValueError('Spokes and loops parameters must be provided for "hanging_tree" type.')
+        if args.extra_vertices is None:
+            extra_vertices = [0] * args.spokes
+            edges = edges_for_hanging_tree_with_loops(args.spokes, args.loops, extra_vertices)
+        else:
+            extra_vertices = args.extra_vertices.split(',')
+            extra_vertices = [int(v) for v in extra_vertices]
+            if len(extra_vertices) != args.spokes:
+                raise ValueError('Extra vertices list must have the same length as the number of spokes.')
+            edges = edges_for_hanging_tree_with_loops(args.spokes, args.loops, extra_vertices)
+    elif src_type == 'complete':
+        if args.nodes is None:
+            raise ValueError('Nodes parameter must be provided for "complete" type.')
+        edges = edges_for_complete_graph(args.nodes)
+    elif src_type == 'wheel':
+        if args.spokes is None:
+            raise ValueError('Spokes parameter must be provided for "wheel" type.')
+        edges = edges_for_wheel_graph(args.spokes)
+    elif src_type == 'cycle_with_loops':
+        if args.nodes is None or args.loops is None:
+            raise ValueError('Nodes and loops parameters must be provided for "cycle_with_loops" type.')
+        edges = edges_for_cycle_graph_with_loops(args.nodes, args.loops)
+    elif src_type == 'friendship':
+        if args.nodes is None or args.loops is None:
+            raise ValueError('Nodes & loops parameters must be provided for "friendship" type.')
+        edges = edges_for_friendship_graph(args.nodes, args.loops)
     
-    start_time = time.time()
     GameRunner(edges).run()
-    print(f"Run time: {time.time() - start_time:.2f} seconds")
 if __name__ == '__main__':
     main()

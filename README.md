@@ -163,6 +163,21 @@ The naming is getting a bit vain, but balloon paths and ferris wheel graphs have
 | 9 | P1 | (5 - 4) |
 | 10 | Tie | (5 - 5) |
 
+### Balloon Cycle graphs
+Similar to a balloon path but with the nodes connected in a cycle. 
+![BP_10](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/2e44afee-2e41-46f3-a1a6-34778a910548)
+
+| Number of Vertices | Winner | Score |
+| -------- | ------- | ------- |
+| 3 | P2 | (0 - 3) |
+| 4 | P1 | (3 - 1) |
+| 5 | P2 | (2 - 3) |
+| 6 | P1 | (4 - 2) |
+| 7 | P2 | (2 - 5) |
+| 8 | Tie | (4 - 4) |
+| 9 | P2 | (4 - 5) |
+| 10 | Tie | (5 - 5) |
+
 ## How to Play
 
 1. Enter the desired number of spokes at the start screen.

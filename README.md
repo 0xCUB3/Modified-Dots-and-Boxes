@@ -162,6 +162,9 @@ The naming is getting a bit vain, but balloon paths and ferris wheel graphs have
 | 8 | Tie | (4 - 4) |
 | 9 | P1 | (5 - 4) |
 | 10 | Tie | (5 - 5) |
+| 11 | P1 | (6 - 5) |
+| 12 | Tie | (6 - 6) |
+| 13 | P1 | (7 - 6) |
 
 ### Balloon Cycle graphs
 Similar to a balloon path but with the nodes connected in a cycle. 

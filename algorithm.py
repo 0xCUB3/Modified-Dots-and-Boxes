@@ -3,14 +3,172 @@ import sys
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
+from typing import Tuple, List, Dict
 
 _progress = {'top_level': 1000, 'count': 0, 'start_time': None}
 
+class Vertex:
+    def __init__(self, raw_id: int, graph: nx.Graph) -> None:
+        self.raw_id = raw_id
+        self.neighbors = list(graph.neighbors(raw_id))
+        self.num_neighbors = len(self.neighbors)
+        self.num_loops = sum(1 for n in self.neighbors if n == raw_id)
+        self.canonical_id: int = -1
+        self.category_key: List[int] = None
+        self.category: int = -1
+        self.prior_category: int = -1
+
+class CanonicalEdges:
+    def __init__(self, graph: nx.Graph) -> None:
+        self.graph = graph
+        self._init_vertices()
+
+    def _init_vertices(self) -> None:
+        self.vertices: Dict[int, Vertex] = {node: Vertex(node, self.graph) for node in self.graph.nodes()}
+        self._num_vertices = len(self.vertices)
+
+    def calc(self) -> List[Tuple[int, int]]:
+        self._categorize_vertices_by_connections()
+        self._finalize_canonical_ids()
+        raw_edges = [
+            (v.canonical_id, self.vertices[n].canonical_id)
+            for v in self.vertices.values() for n in v.neighbors
+            if v.canonical_id <= self.vertices[n].canonical_id
+        ]
+        return sorted(raw_edges)
+
+    def _categorize_vertices_by_connections(self) -> None:
+        self._init_category_iteration_variables()
+        while not self._iteration_is_done():
+            self._update_category_iteration_variables()
+
+    def _init_category_iteration_variables(self) -> None:
+        self._iterations = 0
+        for v in self.vertices.values():
+            v.category_key = [v.num_neighbors, -1 * v.num_loops]
+        self._update_categories_based_on_category_keys()
+
+    def _update_categories_based_on_category_keys(self) -> None:
+        self._category_keys = list(set(
+            [tuple(v.category_key) for v in self.vertices.values()]
+        ))
+        self._category_keys.sort()
+        self._num_categories = len(self._category_keys)
+        vertices_for_category_key: Dict[Tuple[int, ...], List[Vertex]] = {
+            category_key: [] for category_key in self._category_keys
+        }
+        for v in self.vertices.values():
+            vertices_for_category_key[tuple(v.category_key)].append(v)
+        for i, category_key in enumerate(self._category_keys):
+            for v in vertices_for_category_key[category_key]:
+                v.category = i
+        self._iterations += 1
+
+    def _iteration_is_done(self) -> bool:
+        done_for_simple_cases = (
+            (self._num_categories == 1)
+            or (self._num_categories == self._num_vertices)
+            or (self._iterations >= self._num_vertices)
+        )
+        if done_for_simple_cases:
+            return True
+        else:
+            a_category_has_changed = False
+            for v in self.vertices.values():
+                if v.category != v.prior_category:
+                    a_category_has_changed = True
+                    break
+            return not a_category_has_changed
+
+    def _update_category_iteration_variables(self) -> None:
+        for v in self.vertices.values():
+            v.prior_category = v.category
+            v.category_key = [v.category]
+            num_neighbors_for_category = [
+                0 for _ in range(self._num_categories)
+            ]
+            for n in v.neighbors:
+                num_neighbors_for_category[self.vertices[n].category] += 1
+            v.category_key.extend(reversed(num_neighbors_for_category))
+        self._update_categories_based_on_category_keys()
+
+    def _finalize_canonical_ids(self) -> None:
+        if self._num_categories == self._num_vertices:
+            for v in self.vertices.values():
+                v.canonical_id = v.category
+        else:
+            vertices_for_category: Dict[int, List[Vertex]] = {
+                i: [] for i in range(self._num_categories)
+            }
+            for v in self.vertices.values():
+                vertices_for_category[v.category].append(v)
+            self._next_canonical_id = 0
+            for i in range(self._num_categories):
+                self._assign_canonical_ids_for_ties(
+                    vertices_for_category[i]
+                )
+
+    def _assign_canonical_ids_for_ties(self,
+        vertices: List[Vertex]
+    ) -> None:
+        for _ in range(len(vertices)):
+            if len(vertices) == 1:
+                next_vertex = vertices[0]
+            else:
+                connected_to_canonical_id, not_connected_to_canonical_id = \
+                    self._split_by_connection_to_canonical_id(vertices)
+                if connected_to_canonical_id:
+                    min_canonical_id = {
+                        v.raw_id: self._num_vertices
+                        for v in connected_to_canonical_id
+                    }
+                    for v in connected_to_canonical_id:
+                        for n in v.neighbors:
+                            if self.vertices[n].canonical_id != -1:
+                                if (
+                                    self.vertices[n].canonical_id <
+                                    min_canonical_id[v.raw_id]
+                                ):
+                                    min_canonical_id[v.raw_id] = \
+                                        self.vertices[n].canonical_id
+                    connected_to_canonical_id.sort(
+                        key=lambda v:
+                        (min_canonical_id[v.raw_id], v.raw_id)
+                    )
+                    next_vertex = connected_to_canonical_id[0]
+                else:
+                    not_connected_to_canonical_id.sort(
+                        key=lambda v: v.raw_id
+                    )
+                    next_vertex = not_connected_to_canonical_id[0]
+            next_vertex.canonical_id = self._next_canonical_id
+            self._next_canonical_id += 1
+            vertices.remove(next_vertex)
+
+    def _split_by_connection_to_canonical_id(self,
+        vertices: List[Vertex]
+    ) -> Tuple[List[Vertex], List[Vertex]]:
+        connected_to_canonical_id: List[Vertex] = []
+        not_connected_to_canonical_id: List[Vertex] = []
+        for v in vertices:
+            connected = False
+            for n in v.neighbors:
+                if self.vertices[n].canonical_id != -1:
+                    connected_to_canonical_id.append(v)
+                    connected = True
+                    break
+            if not connected:
+                not_connected_to_canonical_id.append(v)
+        return (connected_to_canonical_id, not_connected_to_canonical_id)
+
 def run(graph: nx.Graph) -> None:
-    global _progress  # Declare that we'll use the global version
+    global _progress
     memo = {}
     draw_and_save_graph(graph)
     _progress['start_time'] = time.perf_counter()
+    
+    # Using the CanonicalEdges directly with the graph object now.
+    canonical_edge_list = CanonicalEdges(graph).calc()
     net_score = _net_score(graph=graph, depth=0, memo=memo)
     # Calculate each player's score based on the net score
     first_player_score = (graph.number_of_nodes() + net_score) // 2
@@ -26,8 +184,12 @@ def print_scores(first_player_score: int, second_player_score: int) -> None:
         print('Tie game!')
 
 def _net_score(graph: nx.Graph, depth: int, memo: dict) -> int:
-    # graph_key = nx.weisfeiler_lehman_graph_hash(graph)
-    graph_key = build_graph_key(graph)
+    #graph_key = nx.weisfeiler_lehman_graph_hash(graph)
+    #graph_key = build_graph_key(graph)
+    # Conversion to canonical edges for memoization
+    canonical_edge_list = CanonicalEdges(graph).calc()
+    graph_key = str(canonical_edge_list)
+
     if graph_key in memo:
         return memo[graph_key]
     
@@ -103,10 +265,17 @@ def _track_progress(depth: int) -> None:
         )
 
 def build_graph_key(graph: nx.Graph) -> str:
-    key = []
-    for e in graph.edges:
-        key.append(f'{e[0]}-{e[1]}')
-    return '|'.join(key)
+    # Use a combination of graph invariants to generate a more unique key.
+    # This includes degree sequences, but also other structural properties.
+    degrees = tuple(sorted(dict(graph.degree()).values()))
+    edges = tuple(sorted(map(sorted, graph.edges())))
+    num_nodes = graph.number_of_nodes()
+    # Example addition: Number of connected components could also influence outcomes.
+    num_components = nx.number_connected_components(graph)
+    
+    # Serialize this information into a string key.
+    key = f"{degrees}-{edges}-{num_nodes}-{num_components}"
+    return key
 
 def draw_and_save_graph(graph: nx.Graph) -> None:
     plt.figure(figsize=(10, 8))  # Set the figure size (width, height) in inches.
@@ -179,6 +348,7 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "complete" type.')
         G = nx.complete_graph(args.nodes)
+
         _ = run(G)
     elif src_type == 'wheel':
         if args.nodes is None:
@@ -200,8 +370,8 @@ def main():
         _ = run(create_balloon_cycle_graph(args.nodes))
     elif src_type == 'other':
         G = nx.Graph()
-        G.add_nodes_from([1, 2, 3, 4])
-        G.add_edges_from([(1,2), (2,3)])
+        G.add_nodes_from([0, 1, 2, 3, 4, 5, 6, 7, 8])
+        G.add_edges_from([(1,4), (1,5), (1,8), (2,4), (2,5), (3,5), (3,6), (4,6), (4,7), (5,8), (6,7), (7,0), (8,0)])
         _ = run(G)
 
 if __name__ == '__main__':

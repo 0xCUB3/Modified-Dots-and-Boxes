@@ -181,6 +181,17 @@ Similar to a balloon path but with the nodes connected in a cycle.
 | 9 | P2 | (4 - 5) |
 | 10 | Tie | (5 - 5) |
 
+### Hypercubes
+An interesting thing to look at.
+![HC_3](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/d01ded89-96e4-44af-8166-fe70300d35ea)
+| Number of Dimensions | Winner | Score |
+| -------- | ------- | ------- |
+| 1 | P1 | (2 - 0) |
+| 2 | P2 | (0 - 4) |
+| 3 | P2 | (2 - 6) |
+| 4 | NF | NF |
+
+
 ## How to Play
 
 1. Enter the desired number of spokes at the start screen.

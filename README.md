@@ -191,6 +191,17 @@ An interesting thing to look at.
 | 3 | P2 | (2 - 6) |
 | 4 | NF | NF |
 
+### Double N-gons
+![DN_3](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/f4fda7d7-2403-4e4c-8b94-0004d1e8a1c9)
+| Size of N-gon | Winner | Score |
+| -------- | ------- | ------- |
+| 3 | P1 | (5 - 1) |
+| 4 | P2 | (2 - 6) |
+| 5 | P1 | (8 - 2) |
+| 6 | P2 | (4 - 8) |
+| 7 | P1 | (8 - 6) |
+| 8 | P2 | (7 - 9) |
+
 
 ## How to Play
 

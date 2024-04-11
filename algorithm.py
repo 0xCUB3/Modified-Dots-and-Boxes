@@ -1,16 +1,16 @@
 import argparse
 import sys
 import time
-import networkx as nx
+import igraph as ig
 import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 
 _progress = {'top_level': 1000, 'count': 0, 'start_time': None}
 
 class Vertex:
-    def __init__(self, raw_id: int, graph: nx.Graph) -> None:
+    def __init__(self, raw_id: int, graph: ig.Graph) -> None:
         self.raw_id = raw_id
-        self.neighbors = list(graph.neighbors(raw_id))
+        self.neighbors = graph.neighbors(raw_id)
         self.num_neighbors = len(self.neighbors)
         self.num_loops = sum(1 for n in self.neighbors if n == raw_id)
         self.canonical_id: int = -1
@@ -19,12 +19,12 @@ class Vertex:
         self.prior_category: int = -1
 
 class CanonicalEdges:
-    def __init__(self, graph: nx.Graph) -> None:
+    def __init__(self, graph: ig.Graph) -> None:
         self.graph = graph
         self._init_vertices()
 
     def _init_vertices(self) -> None:
-        self.vertices: Dict[int, Vertex] = {node: Vertex(node, self.graph) for node in self.graph.nodes()}
+        self.vertices: Dict[int, Vertex] = {node.index: Vertex(node.index, self.graph) for node in self.graph.vs}
         self._num_vertices = len(self.vertices)
 
     def calc(self) -> List[Tuple[int, int]]:
@@ -161,7 +161,7 @@ class CanonicalEdges:
                 not_connected_to_canonical_id.append(v)
         return (connected_to_canonical_id, not_connected_to_canonical_id)
 
-def run(graph: nx.Graph) -> None:
+def run(graph: ig.Graph) -> None:
     global _progress
     memo = {}
     draw_and_save_graph(graph)
@@ -171,8 +171,8 @@ def run(graph: nx.Graph) -> None:
     canonical_edge_list = CanonicalEdges(graph).calc()
     net_score = _net_score(graph=graph, depth=0, memo=memo)
     # Calculate each player's score based on the net score
-    first_player_score = (graph.number_of_nodes() + net_score) // 2
-    second_player_score = (graph.number_of_nodes() - net_score) // 2
+    first_player_score = (graph.vcount() + net_score) // 2
+    second_player_score = (graph.vcount() - net_score) // 2
     print_scores(first_player_score, second_player_score)
 
 def print_scores(first_player_score: int, second_player_score: int) -> None:
@@ -183,68 +183,63 @@ def print_scores(first_player_score: int, second_player_score: int) -> None:
     else:
         print('Tie game!')
 
-def _net_score(graph: nx.Graph, depth: int, memo: dict) -> int:
-    #graph_key = nx.weisfeiler_lehman_graph_hash(graph)
-    #graph_key = build_graph_key(graph)
+def _net_score(graph: ig.Graph, depth: int, memo: dict) -> int:
     # Conversion to canonical edges for memoization
     canonical_edge_list = CanonicalEdges(graph).calc()
     graph_key = str(canonical_edge_list)
 
     if graph_key in memo:
         return memo[graph_key]
-    
-    if nx.is_forest(graph):
-        # Edge case for trees where the sequence of moves leading to realizing it's a tree is relevant.
-        memo[graph_key] = graph.number_of_nodes()
-        return graph.number_of_nodes()
 
-    best_outcome = -1 * graph.number_of_nodes()  # Initialize with the worst possible score
-    
+    if graph.is_tree():
+        memo[graph_key] = graph.vcount()
+        return graph.vcount()
+
+    best_outcome = -1 * graph.vcount()
     tried_edges = []
-    for e in graph.edges:
-        if e in tried_edges:
+    for edge in graph.es:
+        if edge in tried_edges:
             continue
-        tried_edges.append(e)
-        # Each edge considered for cutting creates a new branch of exploration with its own sequence.
+        tried_edges.append(edge)
         test_graph = graph.copy()
-        if e[0] != e[1]:
-            if test_graph.degree(e[0]) == 1 and test_graph.degree(e[1]) == 1:
+        vertices_to_delete = []
+
+        degrees = test_graph.degree()  # Get degrees of all vertices
+
+        if edge.source != edge.target:  # Non-loop edge
+            if degrees[edge.source] == 1 and degrees[edge.target] == 1:
                 points = 2
-                test_graph.remove_edge(*e)
-                test_graph.remove_node(e[0])
-                test_graph.remove_node(e[1])
-            elif test_graph.degree(e[0]) == 1:
+                vertices_to_delete.extend([edge.source, edge.target])
+            elif degrees[edge.source] == 1:
                 points = 1
-                test_graph.remove_edge(*e)
-                test_graph.remove_node(e[0])
-            elif graph.degree(e[1]) == 1:
+                vertices_to_delete.append(edge.source)
+            elif degrees[edge.target] == 1:
                 points = 1
-                test_graph.remove_edge(*e)
-                test_graph.remove_node(e[1])
+                vertices_to_delete.append(edge.target)
             else:
                 points = 0
-                test_graph.remove_edge(*e)
-        else:
-            if test_graph.degree(e[0]) == 2:
+        else:  # Loop edge
+            if degrees[edge.source] == 2:
                 points = 1
-                test_graph.remove_edge(*e)
-                test_graph.remove_node(e[0])
+                vertices_to_delete.append(edge.source)
             else:
                 points = 0
-                test_graph.remove_edge(*e)
+
+        test_graph.delete_edges(edge)
+        if vertices_to_delete:
+            test_graph.delete_vertices(vertices_to_delete)
 
         mult = 1 if points > 0 else -1
-        if test_graph.number_of_nodes() > 0:
+        if test_graph.vcount() > 0:
             outcome = points + mult * _net_score(test_graph, depth + 1, memo)
         else:
             outcome = points
 
-        if (outcome > best_outcome):
+        if outcome > best_outcome:
             best_outcome = outcome
-            if outcome == graph.number_of_nodes():
+            if outcome == graph.vcount():
                 break
-    
-    # Before returning, ensure this best outcome and its sequence is memoized to avoid re-computation.
+
     _track_progress(depth)
     memo[graph_key] = best_outcome
     return best_outcome
@@ -264,35 +259,22 @@ def _track_progress(depth: int) -> None:
             f'seconds:{elapsed_secs:.2f}'
         )
 
-def build_graph_key(graph: nx.Graph) -> str:
-    # Use a combination of graph invariants to generate a more unique key.
-    # This includes degree sequences, but also other structural properties.
-    degrees = tuple(sorted(dict(graph.degree()).values()))
-    edges = tuple(sorted(map(sorted, graph.edges())))
-    num_nodes = graph.number_of_nodes()
-    # Example addition: Number of connected components could also influence outcomes.
-    num_components = nx.number_connected_components(graph)
-    
-    # Serialize this information into a string key.
-    key = f"{degrees}-{edges}-{num_nodes}-{num_components}"
-    return key
-
-def draw_and_save_graph(graph: nx.Graph) -> None:
+def draw_and_save_graph(graph: ig.Graph) -> None:
     plt.figure(figsize=(10, 8))  # Set the figure size (width, height) in inches.
-    nx.draw(graph, with_labels=True, node_size=500, node_color='skyblue', font_size=10, font_weight='bold')
+    ig.plot(graph, target="graph.png", vertex_label=graph.vs.indices, vertex_size=20, vertex_color="skyblue")
     plt.savefig('graph.png')
     plt.close()  # Close the figure to prevent it from being displayed in a window.
 
-def create_friendship_graph(n: int, loop_size: int) -> nx.Graph:
-    G = nx.Graph()
+def create_friendship_graph(n: int, loop_size: int) -> ig.Graph:
+    G = ig.Graph()
     central_vertex = 0
-    G.add_node(central_vertex)
+    G.add_vertex(central_vertex)
     
     for loop_index in range(1, n + 1):
         previous_vertex = None
         for vertex_offset in range(loop_size - 1):
             current_vertex = (loop_index - 1) * (loop_size - 1) + vertex_offset + 1
-            G.add_node(current_vertex)
+            G.add_vertex(current_vertex)
             if previous_vertex is not None:
                 G.add_edge(previous_vertex, current_vertex)
             else:
@@ -306,20 +288,87 @@ def create_friendship_graph(n: int, loop_size: int) -> nx.Graph:
 
     return G
 
-def create_balloon_path_graph(n: int) -> nx.Graph:
-    G = nx.Graph()
+def create_balloon_path_graph(n: int) -> ig.Graph:
+    G = ig.Graph()
     for i in range(n - 1):
-        G.add_node(i)
-        G.add_node(i + 1)
+        G.add_vertex(i)
+        G.add_vertex(i + 1)
         G.add_edge(i, i + 1)
-    for vertex in G.nodes:
+    for vertex in G.vs:
         G.add_edge(vertex, vertex)
     return G
 
-def create_balloon_cycle_graph(n: int) -> nx.Graph:
+def create_balloon_cycle_graph(n: int) -> ig.Graph:
     G = create_balloon_path_graph(n)
     G.add_edge(n - 1, 0)
     return G
+
+def create_balloon_family(a: int, b: int, c: int) -> ig.Graph:
+    """
+    Create a graph consisting of several "balloon" type connected components.
+
+    Args:
+    - a: Number of connected components with 2 vertices connected by an edge, both having self-loops.
+    - b: Number of connected components with 3 vertices, connected in a path, each having self-loops.
+    - c: Number of connected components with 3 vertices, connected in a path, vertices at the ends having self-loops.
+    Returns:
+    - G: A NetworkX graph containing the balloon family.
+    """
+    G = ig.Graph()
+    current_node = 0
+
+    # Create components with 2 vertices each having a loop
+    for _ in range(a):
+        G.add_edge(current_node, current_node + 1)
+        G.add_edge(current_node, current_node)  # Self-loop on first vertex
+        G.add_edge(current_node + 1, current_node + 1)  # Self-loop on second vertex
+        current_node += 2  # Move to the next set of nodes
+
+    # Create components with 3 vertices each having loops
+    for _ in range(b):
+        G.add_edge(current_node, current_node + 1)
+        G.add_edge(current_node + 1, current_node + 2)
+        G.add_edge(current_node, current_node)  # Self-loop on first vertex
+        G.add_edge(current_node + 1, current_node + 1)  # Self-loop on second vertex
+        G.add_edge(current_node + 2, current_node + 2)  # Self-loop on third vertex
+        current_node += 3
+
+    # Create components with 3 vertices, only vertices at the ends have loops
+    for _ in range(c):
+        G.add_edge(current_node, current_node + 1)
+        G.add_edge(current_node + 1, current_node + 2)
+        G.add_edge(current_node, current_node)  # Self-loop on first vertex
+        G.add_edge(current_node + 2, current_node + 2)  # Self-loop on third vertex
+        current_node += 3
+
+    return G
+
+def create_double_ngon_graph(n):
+    """
+    Creates a graph consisting of two n-gons with corresponding vertices connected.
+    
+    Args:
+    - n (int): The number of vertices in each n-gon.
+    
+    Returns:
+    - G (nx.Graph): A NetworkX graph representing the double n-gon structure.
+    """
+    G = ig.Graph()
+
+    # Add vertices and edges for the first n-gon
+    for i in range(n):
+        G.add_edge(i, (i + 1) % n)  # Wrap around using modulo
+
+    # Add vertices and edges for the second n-gon (offset vertices by n)
+    for i in range(n, 2*n):
+        G.add_edge(i, ((i + 1) % n) + n)
+
+    # Connect corresponding vertices from the first n-gon to the second n-gon
+    for i in range(n):
+        G.add_edge(i, i + n)
+
+    return G
+
 
 def main():
     sys.setrecursionlimit(10000)
@@ -340,22 +389,24 @@ def main():
         type=int,
         help='Number of loops for a friendship graph.'
     )
-
+    parser.add_argument(
+        '--balloon_config',
+        type=str,
+        help='Configuration for balloon families in format "a,b,c" where "a" is number of components with 2 vertices and loops, "b" is with 3 vertices all with loops, "c" is with 3 vertices ends with loops.'
+    )
     args = parser.parse_args()
     src_type: str = args.type
-
     if src_type == 'complete':
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "complete" type.')
-        G = nx.complete_graph(args.nodes)
-
+        G = ig.Graph.Full(n=args.nodes)
         _ = run(G)
     elif src_type == 'wheel':
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "wheel" type.')
-        _ = run(nx.wheel_graph(args.nodes+1))
+        _ = run(ig.Graph.Wheel(n=args.nodes + 1))
     elif src_type == 'petersen':
-        _ = run(nx.petersen_graph())
+        _ = run(ig.Graph.Petersen())
     elif src_type == 'friendship':
         if args.nodes is None or args.loops is None:
             raise ValueError('Nodes & loops parameters must be provided for "friendship" type.')
@@ -368,11 +419,27 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "balloon_cycle" type.')
         _ = run(create_balloon_cycle_graph(args.nodes))
+    elif args.type == 'balloon_family':
+        if args.balloon_config is None:
+            raise ValueError('Balloon configuration must be provided for "balloon_family" type.')
+        balloon_a, balloon_b, balloon_c = map(int, args.balloon_config.split(','))
+        run(create_balloon_family(balloon_a, balloon_b, balloon_c))
+    elif args.type == 'hypercube':
+        if args.nodes is None:
+            raise ValueError('Nodes (dimensions) parameter must be provided for "hypercube" type.')
+        graph = ig.Graph.Hypercube(args.nodes)
+        run(graph)
+    elif args.type == 'double_ngon':
+        if args.nodes is None or args.nodes < 3:
+            raise ValueError('A valid number of vertices (at least 3) must be provided for "double_ngon" type.')
+        graph = create_double_ngon_graph(args.nodes)
+        run(graph)
     elif src_type == 'other':
-        G = nx.Graph()
-        G.add_nodes_from([0, 1, 2, 3, 4, 5, 6, 7, 8])
-        G.add_edges_from([(1,4), (1,5), (1,8), (2,4), (2,5), (3,5), (3,6), (4,6), (4,7), (5,8), (6,7), (7,0), (8,0)])
+        G = ig.Graph()
+        G.add_vertices(9)
+        G.add_edges([(1, 4), (1, 5), (1, 8), (2, 4), (2, 5), (3, 5), (3, 6), (4, 6), (4, 7), (5, 8), (6, 7), (7, 0), (8, 0)])
         _ = run(G)
+
 
 if __name__ == '__main__':
     main()

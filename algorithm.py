@@ -164,7 +164,7 @@ class CanonicalEdges:
 def run(graph: ig.Graph) -> None:
     global _progress
     memo = {}
-    draw_and_save_graph(graph)
+    #draw_and_save_graph(graph)
     _progress['start_time'] = time.perf_counter()
     
     # Using the CanonicalEdges directly with the graph object now.
@@ -258,12 +258,6 @@ def _track_progress(depth: int) -> None:
             f'count:{_progress["count"]} '+
             f'seconds:{elapsed_secs:.2f}'
         )
-
-def draw_and_save_graph(graph: ig.Graph) -> None:
-    plt.figure(figsize=(10, 8))  # Set the figure size (width, height) in inches.
-    ig.plot(graph, target="graph.png", vertex_label=graph.vs.indices, vertex_size=20, vertex_color="skyblue")
-    plt.savefig('graph.png')
-    plt.close()  # Close the figure to prevent it from being displayed in a window.
 
 def create_friendship_graph(n: int, loop_size: int) -> ig.Graph:
     G = ig.Graph()

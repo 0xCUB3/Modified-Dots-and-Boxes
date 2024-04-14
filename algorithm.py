@@ -2,7 +2,6 @@ import argparse
 import sys
 import time
 import igraph as ig
-import matplotlib.pyplot as plt
 from typing import Tuple, List, Dict
 
 _progress = {'top_level': 1000, 'count': 0, 'start_time': None}

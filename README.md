@@ -28,9 +28,7 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 | 7 | P2 | (2 - 5) |
 | 8 | P2 | (2 - 6) |
 | 9 | P1 | (7 - 2) |
-| 10 | P1 | NF |
-| 11 | NF | NF |
-| 12 | NF | NF |
+| 10 | P1 | (7 - 3) |
 
 ### Wheel Graphs
 A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. (Proof TBD)
@@ -53,8 +51,8 @@ A wheel graph is one where there is a center vertex connected to n outer vertice
 | 12 | P1 | (7 - 6) |
 * Observation: A pattern seems to appear at 8 spokes...
 
-### Hanging Trees
-The next discovery came in a graph family that we defined as **hanging trees**. These graphs are similar to star graphs, but each outer vertex has an extra edge connecting to itself. In this graph family, player 1 wins for odd spokes and player 2 wins for even spokes. (Proven)
+### Hanging Stars
+The next discovery came in a graph family that we defined as **hanging stars**. These graphs are similar to star graphs, but each outer vertex has an extra edge connecting to itself. In this graph family, player 1 wins for odd spokes and player 2 wins for even spokes. (Proven)
 ![Hanging Tree with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/aae1f137-863f-4e77-9c0a-378dfa7ccae6)
 *Example of a hanging tree with 5 spokes*
 
@@ -74,10 +72,10 @@ The next discovery came in a graph family that we defined as **hanging trees**. 
 | 12 | P2 | (5 - 8) |
 
 Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proven)
-![Extended Hanging Tree](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
+![Extended Hanging Star](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
 *Example of a hanging tree with 5 spokes and 2 extra vertices on one of the spokes*
 
-In a "normal" hanging tree with 2 outer loops, player 2 always wins, but they win by 2 for odd spokes and they win by 3 for even spokes. (Proven)
+In a "normal" hanging star with 2 outer loops, player 2 always wins, but they win by 2 for odd spokes and they win by 3 for even spokes. (Proven)
 
 | Number of Spokes | Winner | Score |
 | -------- | ------- | ------- |
@@ -94,7 +92,7 @@ In a "normal" hanging tree with 2 outer loops, player 2 always wins, but they wi
 | 11 | P2 | (5 - 7) |
 | 12 | P2 | (5 - 8) |
 
-In a hanging tree with 1 spokes and n outer loops, player 1 wins for odd loops, and it is a tie for even loops. (Proven)
+In a hanging star with 1 spokes and n outer loops, player 1 wins for odd loops, and it is a tie for even loops. (Proven)
 | Number of Loops | Winner | Score |
 | -------- | ------- | ------- |
 | 1 | P1 | (2 - 0) |
@@ -104,7 +102,7 @@ In a hanging tree with 1 spokes and n outer loops, player 1 wins for odd loops, 
 | 5 | P1 | (2 - 0) |
 ...and so on
 
-In a hanging tree with 2 spokes and n outer loops, player 2 always wins. (Proven)
+In a hanging star with 2 spokes and n outer loops, player 2 always wins. (Proven)
 | Number of Loops | Winner | Score |
 | -------- | ------- | ------- |
 | 1 | P2 | (0 - 3) |
@@ -114,7 +112,7 @@ In a hanging tree with 2 spokes and n outer loops, player 2 always wins. (Proven
 | 5 | P2 | (1 - 2) |
 ...and so on
 
-For more complicated hanging tree revelations, please see [hanging_trees.md](https://github.com/0xCUB3/Modified-Dots-and-Boxes/blob/main/hanging_trees.md)
+For more complicated hanging star revelations, please see [hanging_trees.md](https://github.com/0xCUB3/Modified-Dots-and-Boxes/blob/main/hanging_trees.md)
 
 ### Petersen graph
 The Petersen graph is a common graph used to prove or disprove a lot of graph theory-related theorems. Player 1 wins on Petersen with a score of (9 - 1) (Proof TBD). 

@@ -283,8 +283,8 @@ def create_friendship_graph(n: int, loop_size: int) -> ig.Graph:
 
 def create_balloon_path_graph(n: int) -> ig.Graph:
     G = ig.Graph()
+    G.add_vertex(0)
     for i in range(n - 1):
-        G.add_vertex(i)
         G.add_vertex(i + 1)
         G.add_edge(i, i + 1)
     for vertex in G.vs:
@@ -293,6 +293,7 @@ def create_balloon_path_graph(n: int) -> ig.Graph:
 
 def create_balloon_cycle_graph(n: int) -> ig.Graph:
     G = create_balloon_path_graph(n)
+    print(G.get_edgelist())
     G.add_edge(n - 1, 0)
     return G
 
@@ -408,9 +409,9 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "balloon_path" type.')
         _ = run(create_balloon_path_graph(args.nodes))
-    elif src_type == 'balloon_cycle':
+    elif src_type == 'ferris_wheel':
         if args.nodes is None:
-            raise ValueError('Nodes parameter must be provided for "balloon_cycle" type.')
+            raise ValueError('Nodes parameter must be provided for "ferris_wheel" type.')
         _ = run(create_balloon_cycle_graph(args.nodes))
     elif args.type == 'balloon_family':
         if args.balloon_config is None:

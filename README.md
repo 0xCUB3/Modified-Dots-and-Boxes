@@ -166,7 +166,7 @@ The naming is getting a bit vain, but balloon paths and ferris wheel graphs have
 | 12 | Tie | (6 - 6) |
 | 13 | P1 | (7 - 6) |
 
-### Balloon Cycle graphs
+### Ferris Wheel graphs
 Similar to a balloon path but with the nodes connected in a cycle. 
 ![BP_10](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/2e44afee-2e41-46f3-a1a6-34778a910548)
 
@@ -180,6 +180,7 @@ Similar to a balloon path but with the nodes connected in a cycle.
 | 8 | Tie | (4 - 4) |
 | 9 | P2 | (4 - 5) |
 | 10 | Tie | (5 - 5) |
+| 11 | P2 | (5 - 6) |
 
 ### Hypercubes
 An interesting thing to look at.

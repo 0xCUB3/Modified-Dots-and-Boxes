@@ -200,6 +200,8 @@ An interesting thing to look at.
 | 6 | P2 | (4 - 8) |
 | 7 | P1 | (8 - 6) |
 | 8 | P2 | (7 - 9) |
+| 9 | Tie | (9 - 9) |
+| 10 | P2 | (9 - 11) |
 
 
 ## How to Play

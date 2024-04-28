@@ -188,7 +188,7 @@ An interesting thing to look at.
 | 1 | P1 | (2 - 0) |
 | 2 | P2 | (0 - 4) |
 | 3 | P2 | (2 - 6) |
-| 4 | NF | NF |
+| 4 | P2 | (6 - 10) |
 
 ### Double N-gons
 ![DN_3](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/f4fda7d7-2403-4e4c-8b94-0004d1e8a1c9)

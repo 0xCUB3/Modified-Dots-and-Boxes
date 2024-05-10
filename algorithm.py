@@ -322,15 +322,6 @@ def create_balloon_cycle_graph(n: int) -> nx.Graph:
     return G
 
 def create_double_ngon_graph(n):
-    """
-    Creates a graph consisting of two n-gons with corresponding vertices connected.
-    
-    Args:
-    - n (int): The number of vertices in each n-gon.
-    
-    Returns:
-    - G (nx.Graph): A NetworkX graph representing the double n-gon structure.
-    """
     G = nx.Graph()
 
     # Add vertices and edges for the first n-gon
@@ -345,6 +336,33 @@ def create_double_ngon_graph(n):
     for i in range(n):
         G.add_edge(i, i + n)
 
+    return G
+
+def create_loopy_star(n: int, k: int) -> nx.MultiGraph:
+    """
+    Create a loopy star graph with n spokes and k outer loops.
+
+    Args:
+        n (int): Number of spokes.
+        k (int): Number of outer loops on each spoke.
+
+    Returns:
+        networkx.Graph: The loopy star graph.
+    """
+    G = nx.MultiGraph()
+
+    # Add the central vertex
+    G.add_node(0)
+
+    # Add the spoke vertices and connect them to the central vertex
+    for i in range(1, n + 1):
+        G.add_node(i)
+        G.add_edge(0, i)
+
+        # Add the outer loop vertices and connect them to the spoke vertex
+        for j in range(k):
+            G.add_edge(i, i)
+    print(G.edges())
     return G
 
 def main():
@@ -374,7 +392,6 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "complete" type.')
         G = nx.complete_graph(args.nodes)
-
         _ = run(G)
     elif src_type == 'wheel':
         if args.nodes is None:
@@ -398,6 +415,14 @@ def main():
         if args.nodes is None:
             raise ValueError('Nodes parameter must be provided for "double_ngon" type.')
         _ = run(create_double_ngon_graph(args.nodes))
+    elif src_type == 'hypercube':
+        if args.nodes is None:
+            raise ValueError('Nodes parameter must be provided for "hypercube" type.')
+        _ = run(nx.hypercube_graph(args.nodes))
+    elif src_type == 'loopy_star':
+        if args.nodes is None or args.loops is None:
+            raise ValueError('Nodes & loops parameters must be provided for "loopy_star" type.')
+        _ = run(create_loopy_star(args.nodes, args.loops))
     elif src_type == 'other':
         G = nx.Graph()
         G.add_nodes_from([0, 1, 2, 3, 4, 5, 6, 7, 8])

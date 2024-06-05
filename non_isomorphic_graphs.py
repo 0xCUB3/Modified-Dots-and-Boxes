@@ -1,75 +1,66 @@
 import networkx as nx
+from networkx.algorithms import weisfeiler_lehman_graph_hash
 from itertools import combinations
-from concurrent.futures import ProcessPoolExecutor, as_completed
 
-def generate_subgraph(graph, edges_to_remove):
-    """
-    Generate a subgraph by removing `edges_to_remove` edges from the original graph.
-    """
-    subgraph = graph.copy()
-    subgraph.remove_edges_from(edges_to_remove)
-    return subgraph, edges_to_remove
+def generate_subgraphs_optimized(n, k):
+    if k == 0:
+        return [nx.complete_graph(n)]
+    if k >= n * (n - 1) // 2:
+        return [nx.Graph()]
 
-def generate_subgraphs(graph, num_edges_to_remove):
-    """
-    Generate all possible subgraphs by removing `num_edges_to_remove` edges from the original graph.
-    """
-    edges = list(graph.edges())
-    edges_combinations = list(combinations(edges, num_edges_to_remove))
-    
-    subgraphs = []
-    with ProcessPoolExecutor() as executor:
-        futures = {executor.submit(generate_subgraph, graph, comb): comb for comb in edges_combinations}
-        for future in as_completed(futures):
-            subgraphs.append(future.result())
-    
-    return subgraphs
+    G = nx.complete_graph(n)
+    initial_edges_removed = [(0, 1)]  # Store initially removed edge
 
-def is_isomorphic_to_any(subgraph, graph_list):
-    """
-    Check if `subgraph` is isomorphic to any graph in `graph_list`.
-    """
-    for unique_graph in graph_list:
-        if nx.is_isomorphic(subgraph, unique_graph):
-            return True
-    return False
+    unique_subgraphs = []
 
-def count_non_isomorphic_graphs(subgraphs):
-    """
-    Count the number of non-isomorphic graphs in the list of subgraphs.
-    """
-    non_isomorphic_graphs = []
-    unique_sequences = []
-    
-    for subgraph, edges_to_remove in subgraphs:
-        if not is_isomorphic_to_any(subgraph, [g for g, _ in non_isomorphic_graphs]):
-            non_isomorphic_graphs.append((subgraph, edges_to_remove))
-            unique_sequences.append(edges_to_remove)
-    
-    return len(non_isomorphic_graphs), unique_sequences
+    if k > 0:
+        # Case 1: Second edge adjacent to the first
+        G1 = G.copy()
+        G1.remove_edge(1, 2)
+        unique_subgraphs.extend(generate_subgraphs_recursive(G1, k - 1, initial_edges_removed + [(1, 2)]))
 
-def main():
-    # Example graph: complete graph with 4 nodes
-    original_graph = nx.complete_graph(11)
-    original_graph.remove_edge(0,1)
-    original_graph.remove_edge(2,3)
-    original_graph.remove_edge(4,5)
-    original_graph.remove_edge(3,4)
-    original_graph.remove_edge(5,6)
-    
-    # Number of edges to remove
-    num_edges_to_remove = 2
-    
-    # Generate all possible subgraphs by removing num_edges_to_remove edges
-    subgraphs = generate_subgraphs(original_graph, num_edges_to_remove)
-    
-    # Count the number of non-isomorphic subgraphs and get the unique sequences
-    num_non_isomorphic_graphs, unique_sequences = count_non_isomorphic_graphs(subgraphs)
-    
-    print(f"Number of non-isomorphic graphs after removing {num_edges_to_remove} edges: {num_non_isomorphic_graphs}")
-    print("Unique edge removal sequences resulting in non-isomorphic graphs:")
-    for sequence in unique_sequences:
-        print(sequence)
+        # Case 2: Second edge not adjacent to the first
+        G2 = G.copy()
+        G2.remove_edge(2, 3) 
+        unique_subgraphs.extend(generate_subgraphs_recursive(G2, k - 1, initial_edges_removed + [(2, 3)]))
+    else:
+        unique_subgraphs.append((G, initial_edges_removed)) # Return graph and removed edges
 
-if __name__ == "__main__":
-    main()
+    return get_non_isomorphic_graphs(unique_subgraphs)
+
+def generate_subgraphs_recursive(G, k, removed_edges):
+    unique_subgraphs = {}
+    edges_to_remove = list(combinations(G.edges(), k))
+
+    for edges in edges_to_remove:
+        subgraph = G.copy()
+        subgraph.remove_edges_from(edges)
+        wl_hash = weisfeiler_lehman_graph_hash(subgraph)
+
+        if wl_hash not in unique_subgraphs:
+            unique_subgraphs[wl_hash] = (subgraph, removed_edges + list(edges)) 
+
+    return list(unique_subgraphs.values())
+
+def get_non_isomorphic_graphs(graphs):
+    non_isomorphic = []
+    hashes = set()
+    for graph, removed_edges in graphs:
+        h = weisfeiler_lehman_graph_hash(graph)
+        if h not in hashes:
+            non_isomorphic.append((graph, removed_edges))
+            hashes.add(h)
+    return non_isomorphic
+
+# Test the program
+n = 11  
+k = 6
+
+unique_subgraphs = generate_subgraphs_optimized(n, k)
+
+print(f"Unique non-isomorphic subgraphs of K_{n} with {k} edges removed:\n")
+for i, (subgraph, removed_edges) in enumerate(unique_subgraphs):
+    print(f"Subgraph {i + 1}:")
+    print("   Removed Edges:", removed_edges)
+    print("   Edge List:", subgraph.edges())
+    print("-" * 20)

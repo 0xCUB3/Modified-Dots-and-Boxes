@@ -222,11 +222,6 @@ def edges_for_wheel(n: int) -> List[Tuple[int, int]]:
     edges.append((n - 1, n))
     return edges
 
-if __name__ == '__main__':
-    edges = edges_from_input_file()
-    print(CanonicalEdges(edges).calc())
-
-
 class GameGraph:
     def __init__(self, edges: List[Tuple[int, int]]):
         self.edges = edges

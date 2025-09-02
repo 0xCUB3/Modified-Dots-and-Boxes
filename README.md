@@ -1,3 +1,6 @@
+>[!IMPORTANT]
+>Completed as a part of [this research paper](https://arxiv.org/abs/2407.15198)
+
 # Modified Dots and Boxes
 
 A strategic turn-based game for two players, implemented with Pygame. Players take turns selecting an edge on a wheel graph. Once all edges around a vertex are selected, it becomes isolated and is owned by the player. The player with the most vertices when all edges are selected wins the game.

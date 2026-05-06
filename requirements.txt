@@ -1,3 +1,5 @@
 matplotlib
 networkx
 pygame
+# Optional but recommended for faster, exact canonical graph certificates:
+pynauty

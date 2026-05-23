@@ -5,6 +5,18 @@
 
 A strategic turn-based game for two players, implemented with Pygame. Players take turns selecting an edge on a wheel graph. Once all edges around a vertex are selected, it becomes isolated and is owned by the player. The player with the most vertices when all edges are selected wins the game.
 
+## Paper verification
+
+The current manuscript verification code is in [`verification/`](verification/). It is a small, self-contained minimax checker using the paper's edge-object convention for loops and scoring.
+
+Run it with:
+
+```bash
+python3 verification/solve_graph_game.py
+```
+
+The older GUI, exploratory scripts, and notes below are kept for historical context. For the revised paper, the manuscript proofs and the verifier in `verification/` are the authoritative sources.
+
 In the algorithm file, a recursive method is used to determine outcomes for various classes of graphs. A summary of these findings can be found below. 
 
 ## Features
@@ -16,7 +28,7 @@ In the algorithm file, a recursive method is used to determine outcomes for vari
 ## Discoveries
 
 ### Complete Graphs
-In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3 & 4 (mod 4) vertices. (Proof TBD)
+In a **complete graph**, the computed pattern is that Player 1 wins for 1 or 2 (mod 4) vertices and Player 2 wins for 0 or 3 (mod 4) vertices. A general proof is still open.
 ![K_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1ca0ca1a-dd1f-422a-952c-fe80c3a93f6d)
 *Example of the complete graph K_5*
 
@@ -34,7 +46,7 @@ In a **complete graph**, player 1 wins for 1 & 2 (mod 4) and player 2 wins for 3
 | 10 | P1 | (7 - 3) |
 
 ### Wheel Graphs
-A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. In this graph family, player 2 wins with an even number of spokes and player 1 wins with an odd number of spokes. (Proof TBD)
+A wheel graph is one where there is a center vertex connected to n outer vertices which are all connected via a cycle, analogous to spokes in a wheel. The computed data below show Player 2 wins for odd numbers of spokes and Player 1 wins for even numbers of spokes. A general proof is still open.
 ![Wheel graph with 5 spokes](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/b6b48644-02fe-4326-9087-8766c6fa4d91)
 *Example of the wheel graph with 5 spokes*
 
@@ -74,7 +86,7 @@ The next discovery came in a graph family that we defined as **hanging stars**. 
 | 11 | P1 | (7 - 5) |
 | 12 | P2 | (5 - 8) |
 
-Afterward, we were interested if the same pattern continued when extra vertices were added to certain "spokes" of hanging trees. We found this to be the case. (Proven)
+Afterward, we were interested in what happens when extra vertices are added along the spokes of hanging trees. Some cases have clean proofs, while others are now treated as conjectural in the revised manuscript.
 ![Extended Hanging Star](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/3362730d-989c-4b0a-8548-0d196ab976a1)
 *Example of a hanging tree with 5 spokes and 2 extra vertices on one of the spokes*
 
@@ -118,10 +130,10 @@ In a hanging star with 2 spokes and n outer loops, player 2 always wins. (Proven
 For more complicated hanging star revelations, please see [hanging_trees.md](https://github.com/0xCUB3/Modified-Dots-and-Boxes/blob/main/hanging_trees.md)
 
 ### Petersen graph
-The Petersen graph is a common graph used to prove or disprove a lot of graph theory-related theorems. Player 1 wins on Petersen with a score of (9 - 1) (Proof TBD). 
+The Petersen graph is a common graph used to prove or disprove a lot of graph theory-related theorems. The computation gives a Player 1 win on Petersen with a score of (9 - 1). 
 
 ### Friendship graphs
-A friendship graph is one with a center vertex and n triangles around it. Player 1 wins by 1 for odd n and player 2 wins by 3 for even n (Proof TBD). 
+A friendship graph is one with a center vertex and n triangles around it. Player 1 wins by 1 for even n and Player 2 wins by 3 for odd n. 
 ![F_3](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/1c819731-543b-43d8-9465-1753d562dd45)
 
 
@@ -150,7 +162,7 @@ But now I hear you ask, what about friendship graphs with squares instead of tri
 | 8 | P2 | (12 - 13) |
 
 ### Balloon Path graphs
-The naming is getting a bit vain, but balloon paths and ferris wheel graphs have potential to help us solve wheels. For balloon paths, P1 wins for odd n and there is a tie for even n (Proven)
+The naming is getting a bit vain, but balloon paths and ferris wheel graphs have potential to help us solve wheels. The table below uses number of vertices. The computed pattern is that Player 1 wins for odd numbers of vertices and the game is a tie for even numbers of vertices; the revised manuscript proves the corresponding odd-path-length at-least-tie statement and leaves exactness as computational evidence.
 ![BP_5](https://github.com/0xCUB3/Modified-Dots-and-Boxes/assets/94565160/8ea1b8f5-a583-4610-aad3-64e671852aca)
 
 | Number of Vertices | Winner | Score |
